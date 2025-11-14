@@ -426,6 +426,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 For questions, issues, or feature requests:
 - **GitHub Issues**: [Create an issue](https://github.com/Maaz-Ali0102/DSA-INTELLIFIXPP-Project/issues)
 - **GitHub**: [@Maaz-Ali0102](https://github.com/Maaz-Ali0102)
+- **Email**: maazali0102@gmail.com
+- **LinkedIn**: [Maazali0102](https://www.linkedin.com/in/maazali0102/)
 
 ---
 
