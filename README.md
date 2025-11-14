@@ -408,7 +408,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work & Phase 1 implementation* - [GitHub Profile](https://github.com/YOUR_USERNAME)
+- **Maaz Ali** - *Initial work & Phase 1 implementation* - [GitHub Profile](https://github.com/Maaz-Ali0102)
 
 ---
 
@@ -424,9 +424,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📧 Contact
 
 For questions, issues, or feature requests:
-- **GitHub Issues**: [Create an issue](https://github.com/YOUR_USERNAME/DSA-INTELLIFIXPP-Project/issues)
-- **Email**: your.email@example.com
-
+- **GitHub Issues**: [Create an issue](https://github.com/Maaz-Ali0102/DSA-INTELLIFIXPP-Project/issues)
+- **Email**: maazali0102@gmail.com
+- **Linked In**: [Maazali0102](https://www.linkedin.com/in/maazali0102/)
 ---
 
 **⭐ If you find this project helpful, please star the repository!**
