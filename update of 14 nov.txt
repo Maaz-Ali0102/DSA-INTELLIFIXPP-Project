@@ -1,0 +1,37 @@
+Update log - 14 Nov
+
+Changes made:
+
+1) Added Tokenizer module
+   - src/Tokenizer.h
+   - src/Tokenizer.cpp
+   Purpose: deterministic FSM-based tokenizer to split a C++ line into tokens including keywords, identifiers, operators, separators, string literals, comments, preprocessor tokens and whitespace.
+
+2) Added Autocorrect module earlier (kept). New work integrates Tokenizer.
+   - src/Autocorrect.h
+   - src/Autocorrect.cpp
+   Purpose: token-aware word suggestion, Levenshtein DP, frequency scoring, operator and pattern fixes.
+
+3) Refactored Analyzer to token pipeline
+   - src/Utils.h (updated): now includes Tokenizer, token-based function prototypes, detokenize helper.
+   - src/Utils.cpp (updated): replaced string-based fix pipeline with token-based pipeline; added token-based implementations/wrappers and updateBraceState that inspects token separators only.
+   Key points:
+     - processLine now tokenizes the input line, applies token-level corrections (identifier fixes, operator fixes, pattern fixes), updates brace/indent state from tokens only, detokenizes back to a string and applies indent rules.
+     - token-based functions delegate to Autocorrect when appropriate to reuse existing logic.
+
+4) Replaced Trie default dictionary with a comprehensive VIP list
+   - src/Trie.cpp (updated)
+   New priorities: critical keywords & types (priority 0) and common STL containers/functions/headers (priority 1).
+
+Notes & next steps:
+- The tokenizer improves safety: it prevents many accidental replacements inside strings and comments.
+- The Analyzer now operates on tokens, making bracket tracking exact against separators.
+- Autocorrect and Tokenizer cooperate; Autocorrect still offers suggestion and operator/pattern fixes and is reused by Analyzer.
+- Suggested future improvements: expand frequency table, add unit tests for tokenize/detokenize/autocorrectLine, improve handling of multi-line comments and raw string literals, and add an aggressive/ conservative mode switch for heuristics.
+
+If you want, I can now:
+- Expand the Trie further with more library functions and overloads.
+- Add tests under tests/ demonstrating corrections.
+- Run a compile and fix any build errors you see locally.
+
+-- End of update

@@ -1,0 +1,41 @@
+# Compiled binaries
+*.exe
+*.out
+*.app
+*.o
+*.obj
+
+# Log files
+*.log
+output/
+src/output/
+
+# Generated/corrected files
+corrected_*.cpp
+corrected_*.h
+
+# Preprocessor output
+*.i
+preprocessed.i
+out_main.i
+
+# Temporary files
+compile_log.txt
+test_output.txt
+
+# IDE/Editor files
+.vscode/
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+# Build directories
+build/
+bin/
+obj/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
