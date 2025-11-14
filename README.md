@@ -109,7 +109,7 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/YOUR_USERNAME/DSA-INTELLIFIXPP-Project.git
+git clone https://github.com/Maaz-Ali0102/DSA-INTELLIFIXPP-Project.git
 cd DSA-INTELLIFIXPP-Project
 
 # Compile main program
@@ -408,7 +408,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work & Phase 1 implementation* - [GitHub Profile](https://github.com/YOUR_USERNAME)
+- **Maaz Ali** - *Initial work & Phase 1 implementation* - [GitHub Profile](https://github.com/Maaz-Ali0102)
 
 ---
 
@@ -424,8 +424,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📧 Contact
 
 For questions, issues, or feature requests:
-- **GitHub Issues**: [Create an issue](https://github.com/YOUR_USERNAME/DSA-INTELLIFIXPP-Project/issues)
-- **Email**: your.email@example.com
+- **GitHub Issues**: [Create an issue](https://github.com/Maaz-Ali0102/DSA-INTELLIFIXPP-Project/issues)
+- **GitHub**: [@Maaz-Ali0102](https://github.com/Maaz-Ali0102)
 
 ---
 
