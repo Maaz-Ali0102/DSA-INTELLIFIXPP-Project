@@ -1,12 +1,12 @@
-# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ # IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)
+# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ # IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)
 
 ### C++ Syntactic Analyzer using Data Structures & Algorithms
 
 ### C++ Syntactic Analyzer using Data Structures & Algorithms
 
-**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  
+**Author:** Syed Maaz Ali (CT-232, Section: E)  
 
-**Project for:** CT-159 Data Structures, Algorithms and Applications  ### C++ Syntactic Analyzer using Data Structures & Algorithms
+**Course:** CT-159 Data Structures, Algorithms and Applications  ### C++ Syntactic Analyzer using Data Structures & Algorithms
 
 **Institution:** FAST-NUCES Karachi
 
@@ -14,7 +14,7 @@
 
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
 
-[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ## C++ Code Auto-Corrector using Data Structures & Algorithms
+[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ### C++ Syntactic Analyzer using Data Structures & Algorithms
 
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
 
@@ -30,23 +30,23 @@
 
 
 
-IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ## A C++ Syntactic Analyzer using Advanced Data Structures### A Robust C++ Syntactic Analyzer & Auto-Corrector
+IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures and algorithms. Built as a DSA course project, it demonstrates practical applications of **Trie, Dynamic Programming, Stack, Hash Tables,** and **Finite State Machines**.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ## C++ Code Auto-Corrector using Data Structures & Algorithms
 
 
 
 ### Key Features[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
 
-- **34 Comprehensive Test Cases** - 100% passing rate
+- ✅ **34 Test Cases** - 100% passing rate
 
-- **Multi-DSA Integration** - Trie, DP, Stack, Hashing, FSM[![License](https://img.shields.io/badge/License-MIT-blue)]()**Institution:** FAST-NUCES Karachi
+- 🧠 **Multi-DSA Integration** - Trie, DP, Stack, Hashing, FSM[![License](https://img.shields.io/badge/License-MIT-blue)]()**Institution:** FAST-NUCES Karachi
 
-- **Context-Aware** - Preserves comments, strings, and valid constructs
+- 🎯 **Context-Aware** - Preserves comments, strings, valid code
 
-- **Dual Modes** - Interactive line-by-line and batch file processing
+- ⚡ **Dual Modes** - Interactive & batch file processing
 
 
 
-------**Author:** Syed Maaz Ali (Roll No: CT-232, Section E)  
+------**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  
 
 
 
@@ -62,7 +62,7 @@ IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntact
 
 INPUT (Raw C++ Code)
 
-        ↓IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Course:** CT-159 Data Structures, Algorithms and Applications  
+        ↓IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ## A C++ Syntactic Analyzer using Advanced Data Structures### A Robust C++ Syntactic Analyzer & Auto-Corrector
 
 ┌───────────────────┐
 
@@ -94,7 +94,7 @@ INPUT (Raw C++ Code)
 
 │  4. fixInvalidCharLiterals  │
 
-│  5. addMissingSemicolon     │------**Author:** Syed Maaz Ali (CT-232, Section E)  Project by: Syed Maaz Ali (Roll: CT-232, Section: E)
+│  5. addMissingSemicolon     │------**Author:** Syed Maaz Ali (Roll No: CT-232, Section E)  
 
 │  6. updateBraceState (Stack)│
 
@@ -110,239 +110,215 @@ INPUT (Raw C++ Code)
 
           ↓
 
-OUTPUT (Fixed C++ Code)```## Overview[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
+OUTPUT (Fixed C++ Code)### Pipeline Flow## Overview[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
 
 ```
 
-                    INPUT (Raw C++ Code)
+
 
 ---
 
-                            │
+```
 
 ## Data Structures & Algorithms
 
-                            ▼
+INPUT (Raw C++ Code)
 
 ### 1. Trie (Prefix Tree)
 
-**Purpose:** Dictionary storage for ~140 C++ keywords and identifiers.                ┌───────────────────────┐IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structure Algorithms and Applications
+**Purpose:** Store ~140 C++ keywords for O(m) lookup        ↓IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Course:** CT-159 Data Structures, Algorithms and Applications  
 
 
 
-**Structure:**                │   TOKENIZER (FSM)     │
+```cpp┌───────────────────┐
 
-```cpp
+struct TrieNode {
 
-struct TrieNode {                │   Lexical Analysis    │
+    TrieNode* children[26];│  TOKENIZER (FSM)  │
 
-    TrieNode* children[26];
+    bool isEndOfWord;
 
-    bool isEndOfWord;                └───────────┬───────────┘
-
-    int priority;  // Ranking system
-
-};                            │### Key Features[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
-
-```
-
-                            ▼
-
-**Operations:**
-
-- `insert(word, priority)`: O(m)                ┌───────────────────────┐- **34 Comprehensive Test Cases** - 100% passing rate
-
-- `search(word)`: O(m)
-
-- `getSuggestions(word, maxDist)`: O(m × n × k)                │    TOKEN STREAM       │
-
-
-
----                └───────────┬───────────┘- **Multi-DSA Integration** - Trie, DP, Stack, Hashing, FSM[![License](https://img.shields.io/badge/License-MIT-blue)]()---
-
-
-
-### 2. Levenshtein Distance (Dynamic Programming)                            │
-
-**Purpose:** Calculate edit distance for typo correction.
-
-                            ▼- **Context-Aware** - Preserves comments, strings, and valid constructs
-
-**Algorithm:** Single-row space optimization
-
-```cpp        ┌───────────────────────────────────┐
-
-int editDistance(const string &a, const string &b) {
-
-    vector<int> dp(b.size() + 1);        │     ANALYZER PIPELINE             │- **Dual Modes** - Interactive line-by-line and batch file processing
-
-    for (int j = 0; j <= b.size(); ++j) dp[j] = j;
-
-            │  1. fixIdentifiers (Trie+DP)      │
-
-    for (int i = 1; i <= a.size(); ++i) {
-
-        int prev = dp[0];        │  2. fixStreamOperators            │
-
-        dp[0] = i;
-
-        for (int j = 1; j <= b.size(); ++j) {        │  3. fixForLoop                    │
-
-            int tmp = dp[j];
-
-            dp[j] = (a[i-1] == b[j-1]) ? prev :         │  4. fixInvalidCharLiterals        │------[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
-
-                    1 + min({prev, dp[j], dp[j-1]});
-
-            prev = tmp;        │  5. addMissingSemicolon           │
-
-        }
-
-    }        │  6. updateBraceState (Stack)      │
-
-    return dp[b.size()];
-
-}        └───────────────┬───────────────────┘
-
-```
-
-                        │## System Architecture
-
-**Complexity:**
-
-- Time: O(m × n)                        ▼
-
-- Space: O(m)
-
-                ┌───────────────────┐
-
-**Examples:**
-
-```                │   DETOKENIZER     │
-
-editDistance("cot", "cout") = 1
-
-editDistance("retun", "return") = 1                └───────────┬───────┘```## Table of Contents[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()## 1) Phase 1.5 Changelog — What’s New
-
-editDistance("incldue", "include") = 2
-
-```                            │
-
-
-
----                            ▼                    INPUT (Raw C++ Code)
-
-
-
-### 3. Stack (Brace Matching)                OUTPUT (Fixed C++ Code)
-
-**Purpose:** Track nested scopes and validate brackets.
-
-```                            │1. [Introduction](#introduction)
-
-```cpp
-
-stack<char> braceStack_;
-
-
-
-void updateBraceState(Token &token) {---                            ▼
-
-    if (token.value == "{" || "[" || "(") {
-
-        braceStack_.push(token.value[0]);
-
-    } else if (token.value == "}" || "]" || ")") {
-
-        if (!braceStack_.empty() && isMatchingPair()) {## Data Structures & Algorithms                ┌───────────────────────┐2. [Purpose & Motivation](#purpose--motivation)[![C++ Standard](https://img.shields.io/badge/C++-17-blue)]()
-
-            braceStack_.pop();
-
-        }
-
-    }
-
-}### 1. Trie (Prefix Tree)                │   TOKENIZER (FSM)     │
-
-```
-
-**Purpose:** Dictionary storage for ~140 C++ keywords and identifiers.
-
-**Applications:**
-
-- Detect unmatched brackets                │   Lexical Analysis    │3. [System Architecture](#system-architecture)
-
-- Calculate indentation depth
-
-- Preserve nested commas in for-loops**Structure:**
-
-
-
----```cpp                └───────────┬───────────┘
-
-
-
-### 4. Hash Tables (unordered_set/map)struct TrieNode {
-
-**Purpose:** O(1) keyword and operator lookups.
-
-    TrieNode* children[26];                            │4. [Data Structures Used](#data-structures-used)[![License](https://img.shields.io/badge/License-MIT-blue)]()This release focuses on reliability and real-world “human testing” fixes. The engine is now far better at handling messy, no-space code and context-aware typos without over-correcting valid variables.
-
-```cpp
-
-static const unordered_set<string> keywords = {    bool isEndOfWord;
-
-    "int", "char", "float", "for", "while", "if", 
-
-    "return", "void", "class", /* ~50 more */    int priority;  // Ranking system (cout=10, const=5)                            ▼
+    int priority;│ Lexical Analysis  │
 
 };
 
-};
-
-bool isKeyword(const string &word) {
-
-    return keywords.count(word) > 0;  // O(1)```                ┌───────────────────────┐5. [Algorithms Implemented](#algorithms-implemented)
-
-}
-
-```
+```└─────────┬─────────┘### Key Features[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
 
 
 
----**Operations:**                │    TOKEN STREAM       │
+**Operations:**          ↓
 
+- `insert(word, priority)`: O(m)
 
-
-### 5. Finite State Machine (FSM)- `insert(word, priority)`: O(m)
-
-**Purpose:** Tokenize raw input into semantic units.
-
-- `search(word)`: O(m)                └───────────┬───────────┘6. [Features & Capabilities](#features--capabilities)
-
-**States:** `IDLE`, `IN_STRING`, `IN_COMMENT`, `IN_NUMBER`, `IN_IDENTIFIER`, `IN_OPERATOR`
+- `search(word)`: O(m)  ┌───────────────────┐- **34 Comprehensive Test Cases** - 100% passing rate
 
 - `getSuggestions(word, maxDist)`: O(m × n × k)
 
-**Token Types:**
+│   TOKEN STREAM    │
 
-```cpp                            │
+---
 
-enum TokenType {
+└─────────┬─────────┘- **Multi-DSA Integration** - Trie, DP, Stack, Hashing, FSM[![License](https://img.shields.io/badge/License-MIT-blue)]()**Institution:** FAST-NUCES Karachi
 
-    KEYWORD, IDENTIFIER, OPERATOR, SEPARATOR,---
+### 2. Levenshtein Distance (DP)
 
-    STRING_LITERAL, COMMENT, WHITESPACE, 
+**Purpose:** Calculate edit distance for spell correction          ↓
 
-    NUMBER, PREPROCESSOR                            ▼7. [Test Cases & Validation](#test-cases--validation)
+
+
+**Algorithm:** Space-optimized single-row DP┌─────────────────────────────┐- **Context-Aware** - Preserves comments, strings, and valid constructs
+
+```cpp
+
+int editDistance(const string &a, const string &b) {│   ANALYZER PIPELINE         │
+
+    vector<int> dp(b.size() + 1);
+
+    for (int j = 0; j <= b.size(); ++j) dp[j] = j;│  1. fixIdentifiers (Trie)   │- **Dual Modes** - Interactive line-by-line and batch file processing
+
+    
+
+    for (int i = 1; i <= a.size(); ++i) {│  2. fixStreamOperators      │
+
+        int prev = dp[0];
+
+        dp[0] = i;│  3. fixForLoop              │
+
+        for (int j = 1; j <= b.size(); ++j) {
+
+            int tmp = dp[j];│  4. fixInvalidCharLiterals  │
+
+            dp[j] = (a[i-1] == b[j-1]) ? prev : 
+
+                    1 + min({prev, dp[j], dp[j-1]});│  5. addMissingSemicolon     │------**Author:** Syed Maaz Ali (CT-232, Section E)  Project by: Syed Maaz Ali (Roll: CT-232, Section: E)
+
+            prev = tmp;
+
+        }│  6. updateBraceState (Stack)│
+
+    }
+
+    return dp[b.size()];└─────────┬─────────────────┘
+
+}
+
+```          ↓
+
+
+
+**Complexity:** Time O(m×n), Space O(m)┌───────────────────┐## System Architecture
+
+
+
+**Examples:**│   DETOKENIZER     │
+
+- `editDistance("cot", "cout")` = 1
+
+- `editDistance("retun", "return")` = 1└─────────┬─────────┘
+
+
+
+---          ↓
+
+
+
+### 3. Stack (Brace Matching)OUTPUT (Fixed C++ Code)```## Overview[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
+
+**Purpose:** Validate nested brackets and track scope depth
+
+```
+
+```cpp
+
+stack<char> braceStack_;                    INPUT (Raw C++ Code)
+
+
+
+void updateBraceState(Token &token) {---
+
+    if (token.value == "{" || "[" || "(") {
+
+        braceStack_.push(token.value[0]);                            │
+
+    } else if (token.value == "}" || "]" || ")") {
+
+        if (!braceStack_.empty() && isMatchingPair()) {## Data Structures & Algorithms
+
+            braceStack_.pop();
+
+        }                            ▼
+
+    }
+
+}### 1. Trie (Prefix Tree)
+
+```
+
+**Purpose:** Dictionary storage for ~140 C++ keywords and identifiers.                ┌───────────────────────┐IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structure Algorithms and Applications
+
+---
+
+
+
+### 4. Hash Tables
+
+**Purpose:** O(1) keyword lookups**Structure:**                │   TOKENIZER (FSM)     │
+
+
+
+```cpp```cpp
+
+static const unordered_set<string> keywords = {
+
+    "int", "char", "for", "while", "if", "return" /* ~50 more */struct TrieNode {                │   Lexical Analysis    │
 
 };
 
-```### 2. Levenshtein Distance (Dynamic Programming)
+    TrieNode* children[26];
+
+bool isKeyword(const string &word) {
+
+    return keywords.count(word) > 0;  // O(1)    bool isEndOfWord;                └───────────┬───────────┘
+
+}
+
+```    int priority;  // Ranking system
 
 
 
----**Purpose:** Calculate edit distance for typo correction.        ┌───────────────────────────────────┐
+---};                            │### Key Features[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
+
+
+
+### 5. Finite State Machine (FSM)```
+
+**Purpose:** Tokenize input into semantic units
+
+                            ▼
+
+**States:** `IDLE`, `IN_STRING`, `IN_COMMENT`, `IN_NUMBER`, `IN_IDENTIFIER`
+
+**Operations:**
+
+**Token Types:**
+
+```cpp- `insert(word, priority)`: O(m)                ┌───────────────────────┐- **34 Comprehensive Test Cases** - 100% passing rate
+
+enum TokenType {
+
+    KEYWORD, IDENTIFIER, OPERATOR, SEPARATOR,- `search(word)`: O(m)
+
+    STRING_LITERAL, COMMENT, WHITESPACE, 
+
+    NUMBER, PREPROCESSOR- `getSuggestions(word, maxDist)`: O(m × n × k)                │    TOKEN STREAM       │
+
+};
+
+```
+
+
+
+------                └───────────┬───────────┘- **Multi-DSA Integration** - Trie, DP, Stack, Hashing, FSM[![License](https://img.shields.io/badge/License-MIT-blue)]()---
 
 
 
@@ -350,73 +326,516 @@ enum TokenType {
 
 
 
-### Algorithm 1: Identifier Correction**Algorithm:** Single-row space optimization        │     ANALYZER PIPELINE             │8. [Installation & Usage](#installation--usage)---- Robust Tokenizer (Tokenizer.h/.cpp)
+### Algorithm 1: Identifier Correction### 2. Levenshtein Distance (Dynamic Programming)                            │
 
 ```
 
-FOR each token in stream:```cpp
+FOR each token:**Purpose:** Calculate edit distance for typo correction.
 
-    IF token.type == IDENTIFIER:
+    IF type == IDENTIFIER:
 
-        IF shouldCheck(token, nextToken):int editDistance(const string &a, const string &b) {        │  1. fixIdentifiers (Trie+DP)      │
+        IF shouldCheck(token):                            ▼- **Context-Aware** - Preserves comments, strings, and valid constructs
 
             IF NOT trie.search(token.value):
 
-                suggestions = trie.getSuggestions(token, maxDist=2)    vector<int> dp(b.size() + 1);
+                suggestions = trie.getSuggestions(token, maxDist=2)**Algorithm:** Single-row space optimization
 
                 IF suggestions NOT empty:
 
-                    token.value = suggestions[0]    for (int j = 0; j <= b.size(); ++j) dp[j] = j;        │  2. fixStreamOperators            │9. [Project Structure](#project-structure)
+                    token.value = suggestions[0]```cpp        ┌───────────────────────────────────┐
 
 ```
 
-    
+int editDistance(const string &a, const string &b) {
 
-**Context Rules:**
+### Algorithm 2: For-Loop Semicolon Insertion
+
+```    vector<int> dp(b.size() + 1);        │     ANALYZER PIPELINE             │- **Dual Modes** - Interactive line-by-line and batch file processing
+
+IF token == "for" AND next == "(":
+
+    Track parenthesis depth    for (int j = 0; j <= b.size(); ++j) dp[j] = j;
+
+    Count existing semicolons
+
+    IF count < 2:            │  1. fixIdentifiers (Trie+DP)      │
+
+        Insert ";" at boundaries
+
+    Preserve nested commas    for (int i = 1; i <= a.size(); ++i) {
+
+```
+
+        int prev = dp[0];        │  2. fixStreamOperators            │
+
+### Algorithm 3: Stream Operator Chain
+
+```        dp[0] = i;
+
+IF token == "cout" OR "cin":
+
+    correctOp = (token == "cout") ? "<<" : ">>"        for (int j = 1; j <= b.size(); ++j) {        │  3. fixForLoop                    │
+
+    WHILE next NOT separator:
+
+        IF token is (<, >, :):            int tmp = dp[j];
+
+            REPLACE with correctOp
+
+```            dp[j] = (a[i-1] == b[j-1]) ? prev :         │  4. fixInvalidCharLiterals        │------[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
+
+
+
+---                    1 + min({prev, dp[j], dp[j-1]});
+
+
+
+## Test Suite - All 34 Test Cases            prev = tmp;        │  5. addMissingSemicolon           │
+
+
+
+<div style="overflow-x: auto;">        }
+
+
+
+| TC# | Category | Input | Expected Output | Result |    }        │  6. updateBraceState (Stack)      │
+
+|:---:|:---------|:------|:----------------|:------:|
+
+| **TC-1** | Stream Op | `cot > "Hello"` | `cout << "Hello";` | ✅ PASS |    return dp[b.size()];
+
+| **TC-2** | Stream Op | `cout > "Val" > x > endl` | `cout << "Val" << x << endl;` | ✅ PASS |
+
+| **TC-3** | Stream Op | `cn < name` | `cin >> name;` | ✅ PASS |}        └───────────────┬───────────────────┘
+
+| **TC-4** | Stream Op | `cout : "Hi"` | `cout << "Hi";` | ✅ PASS |
+
+| **TC-5** | Stream Op | `cot:"Name:"<x>endl` | `cout<<"Name:"<<x<<endl;` | ✅ PASS |```
+
+| **TC-6** | Stream Op | `if (x > y) cout << x;` | `if (x > y) cout << x;` | ✅ PASS |
+
+| **TC-7** | Stream Op | `cout << i++;` | `cout << i++;` | ✅ PASS |                        │## System Architecture
+
+| **TC-8** | Stream Op | `cot > a; cn < b;` | `cout << a; cin >> b;` | ✅ PASS |
+
+| **TC-9** | For-Loop | `for(i=0 i<10 i++)` | `for(i=0; i<10; i++)` | ✅ PASS |**Complexity:**
+
+| **TC-10** | For-Loop | `for(i=0; i<10 i++)` | `for(i=0; i<10; i++)` | ✅ PASS |
+
+| **TC-11** | For-Loop | `for(i=0 i<10; i++)` | `for(i=0; i<10; i++)` | ✅ PASS |- Time: O(m × n)                        ▼
+
+| **TC-12** | For-Loop | `for(i=0i<ni++)` | `for(i=0;i<n;i++)` | ✅ PASS |
+
+| **TC-13** | For-Loop | `for(int i=0,j=max(a,b); i<n; i++)` | No change (nested commas) | ✅ PASS |- Space: O(m)
+
+| **TC-14** | For-Loop | `for(int i=0,j=0 i<n i++,j--)` | `for(int i=0,j=0; i<n; i++,j--)` | ✅ PASS |
+
+| **TC-15** | Identifier | `fr(int i=0; i<5; i++)` | `for(int i=0; i<5; i++)` | ✅ PASS |                ┌───────────────────┐
+
+| **TC-16** | Identifier | `retun 0;` | `return 0;` | ✅ PASS |
+
+| **TC-17** | Identifier | `cot << "test";` | `cout << "test";` | ✅ PASS |**Examples:**
+
+| **TC-18** | Identifier | `cn >> x;` | `cin >> x;` | ✅ PASS |
+
+| **TC-19** | Identifier | `nt man() { retun 0; }` | `int main() { return 0; }` | ✅ PASS |```                │   DETOKENIZER     │
+
+| **TC-20** | Identifier | `int i=0, j=5, x=10;` | No change (short vars) | ✅ PASS |
+
+| **TC-21** | Identifier | `wile(true) { break; }` | `while(true) { break; }` | ✅ PASS |editDistance("cot", "cout") = 1
+
+| **TC-22** | Char Literal | `char c = 'a';` | `char c = 'a';` | ✅ PASS |
+
+| **TC-23** | Char Literal | `char str = 'hello';` | `char str = "hello";` | ✅ PASS |editDistance("retun", "return") = 1                └───────────┬───────┘```## Table of Contents[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()## 1) Phase 1.5 Changelog — What’s New
+
+| **TC-24** | Char Literal | `char x = 'ab';` | `char x = "ab";` | ✅ PASS |
+
+| **TC-25** | Char Literal | `char newline = '\n';` | `char newline = '\n';` | ✅ PASS |editDistance("incldue", "include") = 2
+
+| **TC-26** | Semicolon | `int x = 5` | `int x = 5;` | ✅ PASS |
+
+| **TC-27** | Semicolon | `cout << "Hi"` | `cout << "Hi";` | ✅ PASS |```                            │
+
+| **TC-28** | Semicolon | `return 0` | `return 0;` | ✅ PASS |
+
+| **TC-29** | Semicolon | `int a=1 int b=2` | `int a=1; int b=2;` | ✅ PASS |
+
+| **TC-30** | Semicolon | `#include <iostream>` | No semicolon added | ✅ PASS |
+
+| **TC-31** | Edge Case | `for(int i=0,j=min(a,b) i<max(x,y) i++,j--)` | `for(int i=0,j=min(a,b); i<max(x,y); i++,j--)` | ✅ PASS |---                            ▼                    INPUT (Raw C++ Code)
+
+| **TC-32** | Edge Case | `intx=5;inty=10;` | `int x=5;int y=10;` | ✅ PASS |
+
+| **TC-33** | Edge Case | `fr(inti=0i<ni++)cot>i;` | `for(int i=0;i<n;i++)cout<<i;` | ✅ PASS |
+
+| **TC-34** | Edge Case | `// cot > x typos\ncout << x;` | Comment preserved | ✅ PASS |
+
+### 3. Stack (Brace Matching)                OUTPUT (Fixed C++ Code)
+
+</div>
+
+**Purpose:** Track nested scopes and validate brackets.
+
+### Test Summary by Category
+
+```                            │1. [Introduction](#introduction)
+
+| Category | Tests | Passed | Pass Rate |
+
+|:---------|:-----:|:------:|:---------:|```cpp
+
+| Stream Operators | 8 | 8 | 100% |
+
+| For-Loop Syntax | 6 | 6 | 100% |stack<char> braceStack_;
+
+| Identifier Typos | 7 | 7 | 100% |
+
+| Char Literals | 4 | 4 | 100% |
+
+| Semicolon Insertion | 5 | 5 | 100% |
+
+| Edge Cases | 4 | 4 | 100% |void updateBraceState(Token &token) {---                            ▼
+
+| **TOTAL** | **34** | **34** | **100%** |
+
+    if (token.value == "{" || "[" || "(") {
+
+---
+
+        braceStack_.push(token.value[0]);
+
+## Quick Features Reference
+
+    } else if (token.value == "}" || "]" || ")") {
+
+| Category | Input Example | Output Example | Status |
+
+|:---------|:-------------|:--------------|:------:|        if (!braceStack_.empty() && isMatchingPair()) {## Data Structures & Algorithms                ┌───────────────────────┐2. [Purpose & Motivation](#purpose--motivation)[![C++ Standard](https://img.shields.io/badge/C++-17-blue)]()
+
+| **Stream Operators** | `cout > x` | `cout << x;` | ✅ |
+
+| | `cin < name` | `cin >> name;` | ✅ |            braceStack_.pop();
+
+| **For-Loops** | `for(i=0 i<n i++)` | `for(i=0; i<n; i++)` | ✅ |
+
+| **Keywords** | `fr(...) retun 0;` | `for(...) return 0;` | ✅ |        }
+
+| **Identifiers** | `cot << x cn >> y` | `cout << x cin >> y` | ✅ |
+
+| **Preprocessor** | `incldue <iostream>` | `#include <iostream>` | ✅ |    }
+
+| **Char Literals** | `'hello'` | `"hello"` | ✅ |
+
+| **Semicolons** | `int x = 5` | `int x = 5;` | ✅ |}### 1. Trie (Prefix Tree)                │   TOKENIZER (FSM)     │
+
+
+
+---```
+
+
+
+## Installation & Usage**Purpose:** Dictionary storage for ~140 C++ keywords and identifiers.
+
+
+
+### Prerequisites**Applications:**
+
+- C++17 compiler (g++, clang++, MSVC)
+
+- No external dependencies (STL only)- Detect unmatched brackets                │   Lexical Analysis    │3. [System Architecture](#system-architecture)
+
+
+
+### Build Commands- Calculate indentation depth
+
+
+
+**Windows:**- Preserve nested commas in for-loops**Structure:**
+
+```powershell
+
+g++ -std=c++17 -Wall -Wextra -I src `
+
+    src/main.cpp src/Utils.cpp src/Trie.cpp `
+
+    src/Tokenizer.cpp src/Logger.cpp `---```cpp                └───────────┬───────────┘
+
+    src/SymbolTable.cpp src/Autocorrect.cpp `
+
+    -o IntelliFixPP.exe
+
+```
+
+### 4. Hash Tables (unordered_set/map)struct TrieNode {
+
+**Linux/macOS:**
+
+```bash**Purpose:** O(1) keyword and operator lookups.
+
+g++ -std=c++17 -Wall -Wextra -I src \
+
+    src/*.cpp -o IntelliFixPP    TrieNode* children[26];                            │4. [Data Structures Used](#data-structures-used)[![License](https://img.shields.io/badge/License-MIT-blue)]()This release focuses on reliability and real-world “human testing” fixes. The engine is now far better at handling messy, no-space code and context-aware typos without over-correcting valid variables.
+
+```
+
+```cpp
+
+### Running
+
+static const unordered_set<string> keywords = {    bool isEndOfWord;
+
+```powershell
+
+.\IntelliFixPP.exe  # Windows    "int", "char", "float", "for", "while", "if", 
+
+./IntelliFixPP      # Linux/macOS
+
+```    "return", "void", "class", /* ~50 more */    int priority;  // Ranking system (cout=10, const=5)                            ▼
+
+
+
+**Mode 1: Interactive**};
+
+```
+
+> cot > "Hello"};
+
+✓ cout << "Hello";
+
+```bool isKeyword(const string &word) {
+
+
+
+**Mode 2: File**    return keywords.count(word) > 0;  // O(1)```                ┌───────────────────────┐5. [Algorithms Implemented](#algorithms-implemented)
+
+```
+
+Enter file: test.cpp}
+
+✓ Fixed 12 errors
+
+``````
+
+
+
+---
+
+
+
+## Project Structure---**Operations:**                │    TOKEN STREAM       │
+
+
+
+```
+
+IntelliFixPP/
+
+├── src/### 5. Finite State Machine (FSM)- `insert(word, priority)`: O(m)
+
+│   ├── main.cpp              # Entry point
+
+│   ├── Tokenizer.h/.cpp      # FSM lexer**Purpose:** Tokenize raw input into semantic units.
+
+│   ├── Utils.h/.cpp          # Analyzer pipeline
+
+│   ├── Trie.h/.cpp           # Dictionary + DP- `search(word)`: O(m)                └───────────┬───────────┘6. [Features & Capabilities](#features--capabilities)
+
+│   ├── Logger.h/.cpp         # Issue tracking
+
+│   ├── SymbolTable.h/.cpp    # Scope management**States:** `IDLE`, `IN_STRING`, `IN_COMMENT`, `IN_NUMBER`, `IN_IDENTIFIER`, `IN_OPERATOR`
+
+│   └── Autocorrect.h/.cpp    # Helpers
+
+├── tests/- `getSuggestions(word, maxDist)`: O(m × n × k)
+
+│   ├── comprehensive_test_suite.cpp
+
+│   ├── test_stream_operators.cpp**Token Types:**
+
+│   └── test_for_loops.cpp
+
+├── output/```cpp                            │
+
+│   └── analysis.txt
+
+└── README.mdenum TokenType {
+
+```
+
+    KEYWORD, IDENTIFIER, OPERATOR, SEPARATOR,---
+
+### Component Details
+
+    STRING_LITERAL, COMMENT, WHITESPACE, 
+
+| File | LOC | Purpose |
+
+|:-----|:---:|:--------|    NUMBER, PREPROCESSOR                            ▼7. [Test Cases & Validation](#test-cases--validation)
+
+| `Tokenizer.cpp` | ~300 | FSM, Lexical analysis |
+
+| `Utils.cpp` | ~800 | Correction pipeline |};
+
+| `Trie.cpp` | ~200 | Dictionary, Edit distance |
+
+| `main.cpp` | ~150 | UI, Mode selection |```### 2. Levenshtein Distance (Dynamic Programming)
+
+
+
+---
+
+
+
+## Performance Analysis---**Purpose:** Calculate edit distance for typo correction.        ┌───────────────────────────────────┐
+
+
+
+### Time Complexity
+
+
+
+| Operation | Complexity | Notes |## Core Algorithms
+
+|:----------|:-----------|:------|
+
+| Tokenization | O(N) | N = input length |
+
+| Trie Lookup | O(M) | M = word length |
+
+| Edit Distance | O(M × K) | K = dict size |### Algorithm 1: Identifier Correction**Algorithm:** Single-row space optimization        │     ANALYZER PIPELINE             │8. [Installation & Usage](#installation--usage)---- Robust Tokenizer (Tokenizer.h/.cpp)
+
+| For-Loop Fix | O(T) | T = tokens in header |
+
+| **Overall** | **O(N + I×M×K)** | I = identifier count |```
+
+
+
+### Space ComplexityFOR each token in stream:```cpp
+
+
+
+| Component | Complexity |    IF token.type == IDENTIFIER:
+
+|:----------|:-----------|
+
+| Token Stream | O(N) |        IF shouldCheck(token, nextToken):int editDistance(const string &a, const string &b) {        │  1. fixIdentifiers (Trie+DP)      │
+
+| Trie | O(D × L) |
+
+| Stack | O(H) |            IF NOT trie.search(token.value):
+
+| **Total** | **O(N + D×L)** |
+
+                suggestions = trie.getSuggestions(token, maxDist=2)    vector<int> dp(b.size() + 1);
+
+*D = dictionary size, L = avg word length, H = max nesting depth*
+
+                IF suggestions NOT empty:
+
+---
+
+                    token.value = suggestions[0]    for (int j = 0; j <= b.size(); ++j) dp[j] = j;        │  2. fixStreamOperators            │9. [Project Structure](#project-structure)
+
+## Future Enhancements (Phase 2)
+
+```
+
+### Planned Features
+
+1. **Semantic Analysis**    
+
+   - Undeclared variable detection
+
+   - Type mismatch checking**Context Rules:**
+
+   - Scope validation
 
 - Always check: 4+ characters    for (int i = 1; i <= a.size(); ++i) {        │  3. fixForLoop                    │
 
-- Check if followed by `(` or `{`: 2-3 characters
+2. **Advanced Corrections**
 
-- Never check: 1 character        int prev = dp[0];
+   - Token merging: `inti` → `int i`- Check if followed by `(` or `{`: 2-3 characters
+
+   - Preprocessor intelligence
+
+   - Operator precedence warnings- Never check: 1 character        int prev = dp[0];
 
 
 
----        dp[0] = i;        │  4. fixInvalidCharLiterals        │10. [Future Enhancements](#future-enhancements)  - Upgraded FSM to split at type boundaries, so no-space code is parsed correctly:
+3. **IDE Integration**
+
+   - VS Code extension
+
+   - Real-time highlighting---        dp[0] = i;        │  4. fixInvalidCharLiterals        │10. [Future Enhancements](#future-enhancements)  - Upgraded FSM to split at type boundaries, so no-space code is parsed correctly:
 
 
 
-### Algorithm 2: For-Loop Semicolon Insertion        for (int j = 1; j <= b.size(); ++j) {
+---
 
-```
 
-IF token == "for" AND nextToken == "(":            int tmp = dp[j];        │  5. addMissingSemicolon           │
+
+## Academic References### Algorithm 2: For-Loop Semicolon Insertion        for (int j = 1; j <= b.size(); ++j) {
+
+
+
+1. **Aho, Sethi, Ullman** - *Compilers: Principles, Techniques, and Tools*```
+
+2. **Cormen, Leiserson, Rivest, Stein** - *Introduction to Algorithms*
+
+3. **Levenshtein, V.I.** (1966) - *Binary codes capable of correcting deletions*IF token == "for" AND nextToken == "(":            int tmp = dp[j];        │  5. addMissingSemicolon           │
+
+4. **Knuth, D.E.** - *The Art of Computer Programming, Vol 3*
 
     1. Track parenthesis depth
 
+---
+
     2. Count existing semicolons            dp[j] = (a[i-1] == b[j-1]) ? prev : 
+
+## License
 
     3. IF count < 2:
 
+MIT License - See LICENSE file for details.
+
          Insert ";" at boundaries                    1 + min({prev, dp[j], dp[j-1]});        │  6. updateBraceState (Stack)      │11. [References](#references)
+
+---
 
     4. Preserve nested commas (depth > 0)
 
+## Contact
+
 ```            prev = tmp;
 
+**Syed Maaz Ali**  
+
+Roll: CT-232, Section: E  
+
+Email: maazali0102@gmail.com  
+
+GitHub: [@Maaz-Ali0102](https://github.com/Maaz-Ali0102)  ---        }        └───────────────┬───────────────────┘
+
+LinkedIn: [maazali0102](https://www.linkedin.com/in/maazali0102/)
 
 
----        }        └───────────────┬───────────────────┘
+
+**Course:** CT-159 DSA & Applications  
+
+**Institution:** FAST-NUCES Karachi  ### Algorithm 3: Stream Operator Chain    }
 
 
 
-### Algorithm 3: Stream Operator Chain    }
+---```
 
-```
 
-IF token == "cout" OR "cin":    return dp[b.size()];                        │## 1. Project Objective    - `intx=5;` → tokens: `int`, `x`, `=`, `5`, `;`
 
-    correctOp = (token == "cout") ? "<<" : ">>"
+⭐ **Star this repository if you find it helpful!**IF token == "cout" OR "cin":    return dp[b.size()];                        │## 1. Project Objective    - `intx=5;` → tokens: `int`, `x`, `=`, `5`, `;`
+
+
+
+*Last Updated: November 16, 2025*    correctOp = (token == "cout") ? "<<" : ">>"
+
 
     WHILE nextToken NOT separator:}
 
