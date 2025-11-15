@@ -1,148 +1,293 @@
-# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ # IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)
+# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)# IntelliFix++ # IntelliFix++ (Phase 1.5)# IntelliFix++ (Phase 1.5)
 
 
 
-### C++ Syntactic Analyzer using Data Structures & Algorithms### C++ Syntactic Analyzer using Data Structures & Algorithms
+### C++ Syntactic Analyzer using Data Structures & Algorithms
 
 
 
-**Author:** Syed Maaz Ali (CT-232, Section E)  ### C++ Syntactic Analyzer using Data Structures & Algorithms
+**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  ### C++ Syntactic Analyzer using Data Structures & Algorithms### C++ Syntactic Analyzer using Data Structures & Algorithms
 
 **Course:** CT-159 Data Structures, Algorithms and Applications  
 
-**Institution:** FAST-NUCES Karachi**Author:** Syed Maaz Ali (CT-232, Section: E)  
+**Institution:** FAST-NUCES Karachi
 
 
 
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]() [![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]() [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]() [![License](https://img.shields.io/badge/License-MIT-blue)]()**Course:** CT-159 Data Structures, Algorithms and Applications  ### C++ Syntactic Analyzer using Data Structures & Algorithms
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]() [![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]() [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]() [![License](https://img.shields.io/badge/License-MIT-blue)]()**Author:** Syed Maaz Ali (CT-232, Section E)  ### C++ Syntactic Analyzer using Data Structures & Algorithms
 
 
 
----**Institution:** FAST-NUCES Karachi
+---**Course:** CT-159 Data Structures, Algorithms and Applications  
 
 
 
-## System Architecture — Pipeline Flow**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  
+## Overview**Institution:** FAST-NUCES Karachi**Author:** Syed Maaz Ali (CT-232, Section: E)  
 
 
 
-```[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
+IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.
 
-INPUT (Raw C++ Code)
 
-        ↓[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ### C++ Syntactic Analyzer using Data Structures & Algorithms
 
-┌───────────────────┐
+### Key Features[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]() [![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]() [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]() [![License](https://img.shields.io/badge/License-MIT-blue)]()**Course:** CT-159 Data Structures, Algorithms and Applications  ### C++ Syntactic Analyzer using Data Structures & Algorithms
 
-│  TOKENIZER (FSM)  │[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
 
-│ Lexical Analysis  │
 
-└─────────┬─────────┘[![License](https://img.shields.io/badge/License-MIT-blue)]()**Institution:** FAST-NUCES Karachi
+- **34 Comprehensive Test Cases** - 100% passing rate
 
-          ↓
+- **Multi-DSA Integration** - Trie, DP, Stack, Hashing, FSM
 
-┌───────────────────┐
+- **Context-Aware** - Preserves comments, strings, and valid constructs---**Institution:** FAST-NUCES Karachi
 
-│   TOKEN STREAM    │
+- **Dual Modes** - Interactive line-by-line and batch file processing
 
-└─────────┬─────────┘---**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  
 
-          ↓
-
-┌─────────────────────────────┐
-
-│   ANALYZER PIPELINE         │
-
-│  1. fixIdentifiers (Trie)   │## Overview[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
-
-│  2. fixStreamOperators      │
-
-│  3. fixForLoop              │
-
-│  4. fixInvalidCharLiterals  │
-
-│  5. addMissingSemicolon     │IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures and algorithms. Built as a DSA course project, it demonstrates practical applications of **Trie, Dynamic Programming, Stack, Hash Tables,** and **Finite State Machines**.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ## C++ Code Auto-Corrector using Data Structures & Algorithms
-
-│  6. updateBraceState (Stack)│
-
-└─────────┬─────────────────┘
-
-          ↓
-
-┌───────────────────┐### Key Features[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
-
-│   DETOKENIZER     │
-
-└─────────┬─────────┘- ✅ **34 Test Cases** - 100% passing rate
-
-          ↓
-
-OUTPUT (Fixed C++ Code)- 🧠 **Multi-DSA Integration** - Trie, DP, Stack, Hashing, FSM[![License](https://img.shields.io/badge/License-MIT-blue)]()**Institution:** FAST-NUCES Karachi
-
-```
-
-- 🎯 **Context-Aware** - Preserves comments, strings, valid code
 
 ---
 
-- ⚡ **Dual Modes** - Interactive & batch file processing
+## System Architecture — Pipeline Flow**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  
 
-## Installation & Usage
+## System Architecture — Pipeline Flow
 
 
 
-### Prerequisites
+```
 
-- C++17 compiler (g++, clang++, MSVC)------**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  
+INPUT (Raw C++ Code)```[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
+
+        ↓
+
+┌───────────────────┐INPUT (Raw C++ Code)
+
+│  TOKENIZER (FSM)  │
+
+│ Lexical Analysis  │        ↓[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ### C++ Syntactic Analyzer using Data Structures & Algorithms
+
+└─────────┬─────────┘
+
+          ↓┌───────────────────┐
+
+┌───────────────────┐
+
+│   TOKEN STREAM    ││  TOKENIZER (FSM)  │[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
+
+└─────────┬─────────┘
+
+          ↓│ Lexical Analysis  │
+
+┌─────────────────────────────┐
+
+│   ANALYZER PIPELINE         │└─────────┬─────────┘[![License](https://img.shields.io/badge/License-MIT-blue)]()**Institution:** FAST-NUCES Karachi
+
+│  1. fixIdentifiers (Trie)   │
+
+│  2. fixStreamOperators      │          ↓
+
+│  3. fixForLoop              │
+
+│  4. fixInvalidCharLiterals  │┌───────────────────┐
+
+│  5. addMissingSemicolon     │
+
+│  6. updateBraceState (Stack)││   TOKEN STREAM    │
+
+└─────────┬─────────────────┘
+
+          ↓└─────────┬─────────┘---**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  
+
+┌───────────────────┐
+
+│   DETOKENIZER     │          ↓
+
+└─────────┬─────────┘
+
+          ↓┌─────────────────────────────┐
+
+OUTPUT (Fixed C++ Code)
+
+```│   ANALYZER PIPELINE         │
+
+
+
+---│  1. fixIdentifiers (Trie)   │## Overview[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
+
+
+
+## Installation & Usage│  2. fixStreamOperators      │
+
+
+
+### Prerequisites│  3. fixForLoop              │
+
+
+
+- C++17 compiler (g++, clang++, MSVC)│  4. fixInvalidCharLiterals  │
 
 - No external dependencies (STL only)
 
-
+│  5. addMissingSemicolon     │IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures and algorithms. Built as a DSA course project, it demonstrates practical applications of **Trie, Dynamic Programming, Stack, Hash Tables,** and **Finite State Machines**.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ## C++ Code Auto-Corrector using Data Structures & Algorithms
 
 ### Build (Windows PowerShell)
 
-```powershell## System Architecture
+│  6. updateBraceState (Stack)│
 
-g++ -std=c++17 -Wall -Wextra -I src `
+```powershell
+
+g++ -std=c++17 -Wall -Wextra -I src `└─────────┬─────────────────┘
 
   src/main.cpp src/Utils.cpp src/Trie.cpp `
 
-  src/Tokenizer.cpp src/Logger.cpp `
+  src/Tokenizer.cpp src/Logger.cpp `          ↓
 
-  src/SymbolTable.cpp src/Autocorrect.cpp `### Pipeline Flow## Overview[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
+  src/SymbolTable.cpp src/Autocorrect.cpp `
 
-  -o IntelliFixPP.exe
+  -o IntelliFixPP.exe┌───────────────────┐### Key Features[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
 
 ```
+
+│   DETOKENIZER     │
+
+### Build (Linux/macOS)
+
+└─────────┬─────────┘- ✅ **34 Test Cases** - 100% passing rate
+
+```bash
+
+g++ -std=c++17 -Wall -Wextra -I src \          ↓
+
+  src/*.cpp -o IntelliFixPP
+
+```OUTPUT (Fixed C++ Code)- 🧠 **Multi-DSA Integration** - Trie, DP, Stack, Hashing, FSM[![License](https://img.shields.io/badge/License-MIT-blue)]()**Institution:** FAST-NUCES Karachi
 
 
 
 ### Run```
 
-```powershell
 
-.\IntelliFixPP.exeINPUT (Raw C++ Code)
+
+```powershell- 🎯 **Context-Aware** - Preserves comments, strings, valid code
+
+.\IntelliFixPP.exe  # Windows
+
+./IntelliFixPP      # Linux/macOS---
 
 ```
 
-        ↓IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ## A C++ Syntactic Analyzer using Advanced Data Structures### A Robust C++ Syntactic Analyzer & Auto-Corrector
+- ⚡ **Dual Modes** - Interactive & batch file processing
 
-- Mode 1: Interactive (type lines, see fixes)
+**Mode 1: Interactive** (type lines, see fixes)  
+
+**Mode 2: File mode** (process .cpp file)## Installation & Usage
+
+
+
+---
+
+
+
+## Test Suite — Compact Summary (34/34 Passing)### Prerequisites
+
+
+
+| TC | Category | Input (short) | Output (short) | Result |- C++17 compiler (g++, clang++, MSVC)------**Author:** Syed Maaz Ali (Roll: CT-232, Section: E)  
+
+|----|----------|----------------|----------------|:------:|
+
+| 1  | Stream Op | `cot > "Hello"` | `cout << "Hello";` | ✅ |- No external dependencies (STL only)
+
+| 2  | Stream Op | `cout > "Val" > x > endl` | `cout << "Val" << x << endl;` | ✅ |
+
+| 3  | Stream Op | `cn < name` | `cin >> name;` | ✅ |
+
+| 4  | Stream Op | `cout : "Hi"` | `cout << "Hi";` | ✅ |
+
+| 5  | Stream Op | `cot:"A":x` | `cout<<"A"<<x;` | ✅ |### Build (Windows PowerShell)
+
+| 6  | Stream Op | `if (x > y) cout << x;` | no change | ✅ |
+
+| 7  | Stream Op | `cout << i++;` | no change | ✅ |```powershell## System Architecture
+
+| 8  | Stream Op | `cot > a; cn < b;` | `cout << a; cin >> b;` | ✅ |
+
+| 9  | For-Loop  | `for(i=0 i<10 i++)` | `for(i=0; i<10; i++)` | ✅ |g++ -std=c++17 -Wall -Wextra -I src `
+
+| 10 | For-Loop  | `for(i=0; i<10 i++)` | `for(i=0; i<10; i++)` | ✅ |
+
+| 11 | For-Loop  | `for(i=0 i<10; i++)` | `for(i=0; i<10; i++)` | ✅ |  src/main.cpp src/Utils.cpp src/Trie.cpp `
+
+| 12 | For-Loop  | `for(i=0i<ni++)` | `for(i=0;i<n;i++)` | ✅ |
+
+| 13 | For-Loop  | `for(int i=0,j=max(a,b);...)` | nested commas preserved | ✅ |  src/Tokenizer.cpp src/Logger.cpp `
+
+| 14 | For-Loop  | `for(int i=0,j=0 i<n i++,j--)` | `for(int i=0,j=0; i<n; i++,j--)` | ✅ |
+
+| 15 | Identifier| `fr(int i=0;...)` | `for(int i=0;...)` | ✅ |  src/SymbolTable.cpp src/Autocorrect.cpp `### Pipeline Flow## Overview[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)]()
+
+| 16 | Identifier| `retun 0;` | `return 0;` | ✅ |
+
+| 17 | Identifier| `cot << "test";` | `cout << "test";` | ✅ |  -o IntelliFixPP.exe
+
+| 18 | Identifier| `cn >> x;` | `cin >> x;` | ✅ |
+
+| 19 | Identifier| `nt man(){ retun 0; }` | `int main(){ return 0; }` | ✅ |```
+
+| 20 | Identifier| `int i=0, j=5, x=10;` | no change | ✅ |
+
+| 21 | Identifier| `wile(true){...}` | `while(true){...}` | ✅ |
+
+| 22 | Char Lit. | `char c = 'a';` | no change | ✅ |
+
+| 23 | Char Lit. | `char s = 'hello';` | `char s = "hello";` | ✅ |### Run```
+
+| 24 | Char Lit. | `char x = 'ab';` | `char x = "ab";` | ✅ |
+
+| 25 | Char Lit. | `char nl='\n';` | no change | ✅ |```powershell
+
+| 26 | Semicolon | `int x = 5` | `int x = 5;` | ✅ |
+
+| 27 | Semicolon | `cout << "Hi"` | `cout << "Hi";` | ✅ |.\IntelliFixPP.exeINPUT (Raw C++ Code)
+
+| 28 | Semicolon | `return 0` | `return 0;` | ✅ |
+
+| 29 | Semicolon | `int a=1 int b=2` | `int a=1; int b=2;` | ✅ |```
+
+| 30 | Semicolon | `#include <iostream>` | no semicolon added | ✅ |
+
+| 31 | Edge Case | `for(int i=0,j=min(a,b) i<max(x,y)...)` | fixed semicolons | ✅ |        ↓IntelliFix++ is an intelligent C++ auto-corrector that detects and fixes syntactic errors using advanced data structures (Trie, Stack, Hash Tables) and algorithms (Dynamic Programming, FSM). The system processes code through a **token-based pipeline** for context-aware corrections.[![Tests](https://img.shields.io/badge/Tests-34%2F34_Passing-brightgreen)]()**Project for:** CT-159 Data Structures, Algorithms and Applications  ## A C++ Syntactic Analyzer using Advanced Data Structures### A Robust C++ Syntactic Analyzer & Auto-Corrector
+
+| 32 | Edge Case | `intx=5;inty=10;` | `int x=5;int y=10;` | ✅ |
+
+| 33 | Edge Case | `fr(inti=0i<ni++)cot>i;` | `for(int i=0;i<n;i++)cout<<i;` | ✅ |- Mode 1: Interactive (type lines, see fixes)
+
+| 34 | Edge Case | `// cot > x typos\ncout << x;` | comment preserved | ✅ |
 
 - Mode 2: File mode (process .cpp file)┌───────────────────┐
 
+---
 
+
+
+## Contact
 
 ---│  TOKENIZER (FSM)  │
 
+**Syed Maaz Ali** — CT-232, Section E  
+
+Email: maazali0102@gmail.com  
+
+GitHub: @Maaz-Ali0102  
+
+LinkedIn: maazali0102## Test Suite — Compact Summary (34/34 Passing)│ Lexical Analysis  │
 
 
-## Test Suite — Compact Summary (34/34 Passing)│ Lexical Analysis  │
+
+---
 
 
 
-| TC | Category | Input (short) | Output (short) | Result |└─────────┬─────────┘### Key Features[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
+**⭐ Star this repository if you find it helpful!**| TC | Category | Input (short) | Output (short) | Result |└─────────┬─────────┘### Key Features[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)]()
+
 
 |----|----------|----------------|----------------|:------:|
 
