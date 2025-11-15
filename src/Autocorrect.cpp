@@ -147,16 +147,8 @@ void Autocorrect::fixPatterns(vector<Token> &tokens, vector<string> &issues) con
 		return;
 	}
 
-	ssize_t last = -1; for (ssize_t i=(ssize_t)tokens.size()-1;i>=0;--i){ if (tokens[i].type!=TokType::WHITESPACE) { last=i; break; } }
-	if (last>=0){
-		auto &tk = tokens[last];
-		bool endsWithSemicolon = (tk.type==TokType::SEPARATOR && tk.value==";") || (tk.type==TokType::SEPARATOR && (tk.value=="}" || tk.value=="{"));
-		bool isControl = false;
-		for (size_t i=0;i<tokens.size();++i){ if (tokens[i].type==TokType::KEYWORD){ string lw=tokens[i].value; transform(lw.begin(), lw.end(), lw.begin(), [](unsigned char c){ return (char)tolower(c); }); if (lw=="if"||lw=="for"||lw=="while"||lw=="else"||lw=="switch") isControl=true; } }
-		if (!endsWithSemicolon && !isControl && tokens[0].type!=TokType::PREPROCESSOR){
-			tokens.push_back({TokType::SEPARATOR, ";"}); issues.push_back("added missing semicolon");
-		}
-	}
+	// NOTE: Semicolon logic removed - now handled by Analyzer::addMissingSemicolon with robust rules
+	// (This old logic was adding semicolons to comments and function declarations incorrectly)
 	static const vector<string> stltypes = {"vector","string","map","unordered_map","queue","stack","pair"};
 	for (size_t i=0;i<tokens.size();++i){
 		if (tokens[i].type==TokType::IDENTIFIER){

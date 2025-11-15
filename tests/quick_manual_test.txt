@@ -1,0 +1,8 @@
+cot > 'hello world'
+int mian() {
+fo(inti=0i<ni++) { cot>i; }
+incldue <iostream>
+retrun 0
+cut > "test"
+cn < x
+fi(x>0) { whle(y<10) { } }

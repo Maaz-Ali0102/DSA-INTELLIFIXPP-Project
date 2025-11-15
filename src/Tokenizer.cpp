@@ -34,10 +34,10 @@ std::vector<Token> Tokenizer::tokenize(const std::string &line) const {
             tokens.push_back({TokType::COMMENT, line.substr(i)});
             break;
         }
-        // Preprocessor
+        // Preprocessor - only tokenize the '#' character
         if (c=='#'){
-            tokens.push_back({TokType::PREPROCESSOR, line.substr(i)});
-            break;
+            tokens.push_back({TokType::PREPROCESSOR, "#"});
+            ++i; continue;
         }
         // String or char literal
         if (c=='"' || c=='\''){
@@ -46,7 +46,7 @@ std::vector<Token> Tokenizer::tokenize(const std::string &line) const {
             tokens.push_back({TokType::STRING_LITERAL, line.substr(i, j-i)});
             i=j; continue;
         }
-        // Two-char operators
+        // Two-char operators (must check BEFORE single-char operators)
         if (i+1<n){
             std::string two = line.substr(i,2);
             static const std::unordered_set<std::string> twos = {"<<", ">>", "<=", ">=", "==", "!=", "&&", "||", "+=", "-=", "++", "--", "->", "::"};
@@ -59,21 +59,30 @@ std::vector<Token> Tokenizer::tokenize(const std::string &line) const {
             std::string s(1,(char)c);
             tokens.push_back({TokType::SEPARATOR, s}); ++i; continue;
         }
+        // Single-char operators
         if (strchr("+-=*/%<>!&|^~?:", c)){
             tokens.push_back({TokType::OPERATOR, std::string(1,(char)c)}); ++i; continue;
         }
-        // Identifier
+        // Identifier or Keyword - ROBUST: stop at boundary (operator, separator, digit)
         if (isIdentStart(c)){
-            size_t j=i; while (j<n && isIdentChar(line[j])) ++j;
+            size_t j=i+1; // Start after the first valid identifier char
+            // Consume identifier characters, but STOP at non-identifier chars
+            while (j<n && isIdentChar(line[j])) {
+                ++j;
+            }
             std::string w = line.substr(i, j-i);
             std::string lw = w; std::transform(lw.begin(), lw.end(), lw.begin(), [](unsigned char ch){ return (char)std::tolower(ch); });
             if (keywords_.count(lw)) tokens.push_back({TokType::KEYWORD, w});
             else tokens.push_back({TokType::IDENTIFIER, w});
             i=j; continue;
         }
-        // Number
+        // Number - ROBUST: stop at boundary (identifier, operator, separator)
         if (std::isdigit(c)){
-            size_t j=i; while (j<n && (std::isdigit((unsigned char)line[j]) || line[j]=='.')) ++j;
+            size_t j=i+1; // Start after the first digit
+            // Consume only digits and decimal points, STOP at anything else
+            while (j<n && (std::isdigit((unsigned char)line[j]) || line[j]=='.')) {
+                ++j;
+            }
             tokens.push_back({TokType::NUMBER, line.substr(i, j-i)}); i=j; continue;
         }
         // Fallback

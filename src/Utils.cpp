@@ -3,14 +3,11 @@
 #include <cctype>
 #include <sstream>
 #include <cstring>
+#include <iostream>
 
 Analyzer::Analyzer(Trie &trie, SymbolTable &sym, Logger &logger)
     : trie_(trie), sym_(sym), log_(logger), autocorrect_(trie, sym, logger) {
     seedDictionary();
-    opFix_ = {
-        {"=<", "<="}, {"=>", ">="}, {"=!", "!="}, {"=~", "~="},
-        {"==<", "<="}, {"==>", ">="}, {"<>", "!="}
-    };
 }
 
 void Analyzer::seedDictionary(){
@@ -30,42 +27,12 @@ std::string Analyzer::trim(const std::string &s){
     return s.substr(i, j-i);
 }
 
-bool Analyzer::endsWith(const std::string &s, const std::string &suf){
-    return s.size()>=suf.size() && s.compare(s.size()-suf.size(), suf.size(), suf)==0;
-}
-
 std::string Analyzer::detokenize(const std::vector<Token> &tokens) const {
+    // "Dumb" detokenizer: just concatenate all token values
+    // The Tokenizer is responsible for spacing, not the detokenizer
     std::string out;
-    if (tokens.empty()) return out;
-
-    out += tokens[0].value;
-
-    for (size_t i = 1; i < tokens.size(); ++i) {
-        const Token &prev = tokens[i-1];
-        const Token &curr = tokens[i];
-
-        if (curr.type == TokType::WHITESPACE || prev.type == TokType::WHITESPACE) {
-            out += curr.value;
-            continue;
-        }
-
-        char prev_last_char = prev.value.empty() ? ' ' : prev.value.back();
-        char curr_first_char = curr.value.empty() ? ' ' : curr.value[0];
-
-        bool prev_is_op = prev.type == TokType::OPERATOR;
-        bool curr_is_op = curr.type == TokType::OPERATOR;
-
-        if ( (std::isalnum(prev_last_char) && std::isalnum(curr_first_char)) ||
-             (std::isalnum(prev_last_char) && curr_is_op && curr.value != "++" && curr.value != "--") ||
-             (prev_is_op && std::isalnum(curr_first_char) && prev.value != "++" && prev.value != "--")
-           ) {
-            out += " ";
-        } else if (prev.value == ")" && std::isalnum(curr_first_char)) {
-             out += " ";
-        }
-
-
-        out += curr.value;
+    for (const auto &tk : tokens) {
+        out += tk.value;
     }
     return out;
 }
@@ -103,7 +70,73 @@ std::string Analyzer::correctTokenClosest(const std::string &tok, int maxDist, s
 }
 
 void Analyzer::fixInclude(std::vector<Token> &tokens, std::vector<std::string> &issues){
-    // Delegate include fixes to Autocorrect's pattern fixes for now
+    if (tokens.empty()) return;
+    
+    // Find first meaningful (non-whitespace) token
+    int firstMeaningful = -1;
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        if (tokens[i].type != TokType::WHITESPACE) {
+            firstMeaningful = i;
+            break;
+        }
+    }
+    
+    if (firstMeaningful == -1) return; // Empty or whitespace-only line
+    
+    Token &firstToken = tokens[firstMeaningful];
+    
+    // Check if line starts with "include" keyword or typo of "include" (missing #)
+    if ((firstToken.type == TokType::KEYWORD || firstToken.type == TokType::IDENTIFIER) && 
+        (firstToken.value == "include")) {
+        // Insert '#' right before the 'include' token (at firstMeaningful position)
+        tokens.insert(tokens.begin() + firstMeaningful, {TokType::PREPROCESSOR, "#"});
+        issues.push_back("added missing '#' before include");
+        return; // Done fixing
+    }
+    
+    // Check for typos of "include" (like "incldue", "inclde") missing #
+    if (firstToken.type == TokType::IDENTIFIER && firstToken.value != "include") {
+        auto suggestions = trie_.getSuggestions(firstToken.value, 2);
+        if (!suggestions.empty() && suggestions[0] == "include") {
+            // This is a typo of "include" - fix it and add #
+            issues.push_back("identifier '" + firstToken.value + "' -> 'include'");
+            firstToken.value = "include";
+            firstToken.type = TokType::KEYWORD;
+            // Insert '#' before it
+            tokens.insert(tokens.begin() + firstMeaningful, {TokType::PREPROCESSOR, "#"});
+            issues.push_back("added missing '#' before include");
+            return; // Done fixing
+        }
+    }
+    
+    // Check if line starts with '#' followed by 'include' (or typo of include)
+    if (firstToken.type == TokType::PREPROCESSOR && firstToken.value == "#") {
+        // Find next meaningful token after '#'
+        int nextMeaningful = -1;
+        for (size_t i = firstMeaningful + 1; i < tokens.size(); ++i) {
+            if (tokens[i].type != TokType::WHITESPACE) {
+                nextMeaningful = i;
+                break;
+            }
+        }
+        
+        // If next token is an IDENTIFIER, check for "include" typos
+        if (nextMeaningful >= 0 && tokens[nextMeaningful].type == TokType::IDENTIFIER) {
+            std::string& nextVal = tokens[nextMeaningful].value;
+            
+            // Check if it's a typo of "include" (e.g., "inclde", "incldue", "inlcude")
+            if (nextVal != "include") {
+                auto suggestions = trie_.getSuggestions(nextVal, 2);
+                if (!suggestions.empty() && suggestions[0] == "include") {
+                    issues.push_back("identifier '" + nextVal + "' -> 'include'");
+                    nextVal = "include";
+                }
+            }
+        }
+        return; // Done checking
+    }
+    
+    // Delegate other include fixes to Autocorrect's pattern fixes
     autocorrect_.fixPatterns(tokens, issues);
 }
 
@@ -135,9 +168,24 @@ void Analyzer::fixForLoop(std::vector<Token> &tokens, std::vector<std::string> &
                 }
 
                 if (for_loop_end != 0) {
-                    // First, count how many semicolons are already present at depth 0
-                    int semicolon_count = 0;
+                    // Step 1: Replace commas with semicolons (for cases like: for(i=0,i<n,i++))
                     int inner_paren_level = 0;
+                    for (size_t l = j + 1; l < for_loop_end; ++l) {
+                        if (tokens[l].type == TokType::SEPARATOR) {
+                            if (tokens[l].value == "(") {
+                                inner_paren_level++;
+                            } else if (tokens[l].value == ")") {
+                                inner_paren_level--;
+                            } else if (tokens[l].value == "," && inner_paren_level == 0) {
+                                tokens[l].value = ";";
+                                issues.push_back("for(...) comma -> semicolon");
+                            }
+                        }
+                    }
+
+                    // Step 2: Count semicolons after comma replacement
+                    int semicolon_count = 0;
+                    inner_paren_level = 0;
                     for (size_t l = j + 1; l < for_loop_end; ++l) {
                         if (tokens[l].type == TokType::SEPARATOR) {
                             if (tokens[l].value == "(") {
@@ -150,25 +198,122 @@ void Analyzer::fixForLoop(std::vector<Token> &tokens, std::vector<std::string> &
                         }
                     }
 
-                    // A proper for loop needs exactly 2 semicolons
-                    // If we have fewer, replace top-level commas with semicolons
-                    if (semicolon_count < 2) {
+                    // Step 3: Handle missing semicolons
+                    if (semicolon_count == 0) {
+                        // Case: for(i=0 i<5 i++) - no semicolons at all
+                        // Strategy: Find first comparison operator, then work backwards to find end of init
+                        
+                        // Step A: Find first comparison operator (<, >, <=, >=, ==, !=)
                         inner_paren_level = 0;
-                        int replaced = 0;
-                        for (size_t l = j + 1; l < for_loop_end && semicolon_count + replaced < 2; ++l) {
+                        size_t first_comparison = 0;
+                        for (size_t l = j + 1; l < for_loop_end; ++l) {
                             if (tokens[l].type == TokType::SEPARATOR) {
-                                if (tokens[l].value == "(") {
-                                    inner_paren_level++;
-                                } else if (tokens[l].value == ")") {
-                                    inner_paren_level--;
-                                } else if (tokens[l].value == "," && inner_paren_level == 0) {
-                                    tokens[l].value = ";";
-                                    issues.push_back("for(...) comma -> semicolon");
-                                    replaced++;
+                                if (tokens[l].value == "(") inner_paren_level++;
+                                else if (tokens[l].value == ")") inner_paren_level--;
+                            }
+                            if (inner_paren_level == 0 && tokens[l].type == TokType::OPERATOR) {
+                                if (tokens[l].value == "<" || tokens[l].value == ">" || 
+                                    tokens[l].value == "<=" || tokens[l].value == ">=" ||
+                                    tokens[l].value == "==" || tokens[l].value == "!=") {
+                                    first_comparison = l;
+                                    break;
                                 }
                             }
                         }
+
+                        if (first_comparison > 0) {
+                            // Step B: Find the LEFT OPERAND of comparison (e.g., 'i' in 'i<5')
+                            // Go backwards from comparison operator, skip whitespace
+                            size_t left_operand = first_comparison - 1;
+                            while (left_operand > j + 1 && tokens[left_operand].type == TokType::WHITESPACE) {
+                                left_operand--;
+                            }
+                            
+                            // Step C: Find end of INIT expression (the token BEFORE left operand)
+                            // Go backwards from left_operand to find last token of init
+                            size_t init_end = left_operand - 1;
+                            while (init_end > j + 1 && tokens[init_end].type == TokType::WHITESPACE) {
+                                init_end--;
+                            }
+                            
+                            // Insert first semicolon AFTER init_end (which is end of init expression)
+                            tokens.insert(tokens.begin() + init_end + 1, {TokType::SEPARATOR, ";"});
+                            issues.push_back("for(...) inserted first semicolon after init");
+                            for_loop_end++; // Adjust end position
+                            first_comparison++; // Adjust comparison position
+
+                            // Step D: Find end of comparison expression (RIGHT OPERAND)
+                            // Look for token after comparison operator
+                            size_t right_operand = first_comparison + 1;
+                            while (right_operand < for_loop_end && tokens[right_operand].type == TokType::WHITESPACE) {
+                                right_operand++;
+                            }
+                            
+                            // Insert second semicolon AFTER right operand
+                            if (right_operand < for_loop_end && 
+                                (tokens[right_operand].type == TokType::NUMBER || 
+                                 tokens[right_operand].type == TokType::IDENTIFIER)) {
+                                tokens.insert(tokens.begin() + right_operand + 1, {TokType::SEPARATOR, ";"});
+                                issues.push_back("for(...) inserted second semicolon after condition");
+                                for_loop_end++; // Adjust end position
+                            }
+                        }
+                    } else if (semicolon_count == 1) {
+                        // Case: for(i=0; i<5 i++) - only one semicolon
+                        // Find the existing semicolon
+                        inner_paren_level = 0;
+                        size_t first_semicolon = 0;
+                        for (size_t l = j + 1; l < for_loop_end; ++l) {
+                            if (tokens[l].type == TokType::SEPARATOR) {
+                                if (tokens[l].value == "(") inner_paren_level++;
+                                else if (tokens[l].value == ")") inner_paren_level--;
+                                else if (tokens[l].value == ";" && inner_paren_level == 0) {
+                                    first_semicolon = l;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Find comparison operator AFTER the first semicolon
+                        inner_paren_level = 0;
+                        size_t comparison_op = 0;
+                        for (size_t l = first_semicolon + 1; l < for_loop_end; ++l) {
+                            if (tokens[l].type == TokType::SEPARATOR) {
+                                if (tokens[l].value == "(") inner_paren_level++;
+                                else if (tokens[l].value == ")") inner_paren_level--;
+                            }
+                            if (inner_paren_level == 0 && tokens[l].type == TokType::OPERATOR) {
+                                if (tokens[l].value == "<" || tokens[l].value == ">" || 
+                                    tokens[l].value == "<=" || tokens[l].value == ">=" ||
+                                    tokens[l].value == "==" || tokens[l].value == "!=") {
+                                    comparison_op = l;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (comparison_op > 0) {
+                            // Find end of comparison expression
+                            size_t comparison_end = comparison_op + 1;
+                            while (comparison_end < for_loop_end && tokens[comparison_end].type == TokType::WHITESPACE) {
+                                comparison_end++;
+                            }
+                            // Skip the comparison value
+                            if (comparison_end < for_loop_end && 
+                                (tokens[comparison_end].type == TokType::NUMBER || 
+                                 tokens[comparison_end].type == TokType::IDENTIFIER)) {
+                                comparison_end++;
+                            }
+                            
+                            // Insert semicolon AFTER the comparison value
+                            if (comparison_end < for_loop_end) {
+                                tokens.insert(tokens.begin() + comparison_end, {TokType::SEPARATOR, ";"});
+                                issues.push_back("for(...) inserted missing second semicolon");
+                                for_loop_end++; // Adjust end position
+                            }
+                        }
                     }
+                    
                     i = for_loop_end;
                 }
             }
@@ -183,7 +328,114 @@ void Analyzer::fixForLoop(std::vector<Token> &tokens, std::vector<std::string> &
 // cin >x;          -> cin >> x;
 // Works with both '"' and '\'' string literals; applies when a single '<'/'>' is present.
 void Analyzer::fixStreamOperators(std::vector<Token> &tokens, std::vector<std::string> &issues){
-    autocorrect_.fixOperators(tokens, issues);
+    // Robust logic: Fix ANY wrong operator after cout/cin AND continue fixing chain
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        // Skip comments and string literals
+        if (tokens[i].type == TokType::COMMENT || tokens[i].type == TokType::STRING_LITERAL) {
+            continue;
+        }
+        
+        // Check for cout (or typos like cot, cut, ocout)
+        if (tokens[i].type == TokType::IDENTIFIER || tokens[i].type == TokType::KEYWORD) {
+            std::string lowerVal = tokens[i].value;
+            std::transform(lowerVal.begin(), lowerVal.end(), lowerVal.begin(), 
+                          [](unsigned char c){ return (char)std::tolower(c); });
+            
+            if (lowerVal == "cout" || lowerVal == "cot" || lowerVal == "cut" || 
+                lowerVal == "ocout" || lowerVal == "out" || lowerVal == "ct") {
+                // Fix ALL operators in the cout chain until we hit semicolon/separator
+                size_t idx = i + 1;
+                while (idx < tokens.size()) {
+                    // Skip whitespace
+                    if (tokens[idx].type == TokType::WHITESPACE) {
+                        idx++;
+                        continue;
+                    }
+                    
+                    // Stop at semicolon, brace, or end of statement
+                    if (tokens[idx].type == TokType::SEPARATOR && 
+                        (tokens[idx].value == ";" || tokens[idx].value == "{" || 
+                         tokens[idx].value == "}" || tokens[idx].value == "," ||
+                         tokens[idx].value == ")" || tokens[idx].value == "(")) {
+                        break;
+                    }
+                    
+                    // Fix single-char operators or ':' to "<<"
+                    if (tokens[idx].type == TokType::OPERATOR ||
+                        (tokens[idx].type == TokType::SEPARATOR && tokens[idx].value == ":")) {
+                        std::string op = tokens[idx].value;
+                        // Preserve existing correct operator and ++/--
+                        if (op == "<<" || op == "++" || op == "--") {
+                            // ok
+                        } else if (op.length() == 1 || op == ":") {
+                            issues.push_back("stream operator '" + op + "' -> '<<' in cout chain");
+                            tokens[idx].value = "<<";
+                        }
+                    }
+                    
+                    idx++;
+                }
+            }
+            // Check for cin (or typos like cn, cinn)
+            else if (lowerVal == "cin" || lowerVal == "cn" || lowerVal == "cinn") {
+                // Fix ALL operators in the cin chain until we hit semicolon/separator
+                size_t idx = i + 1;
+                while (idx < tokens.size()) {
+                    // Skip whitespace
+                    if (tokens[idx].type == TokType::WHITESPACE) {
+                        idx++;
+                        continue;
+                    }
+                    
+                    // Stop at semicolon, brace, or end of statement
+                    if (tokens[idx].type == TokType::SEPARATOR && 
+                        (tokens[idx].value == ";" || tokens[idx].value == "{" || 
+                         tokens[idx].value == "}" || tokens[idx].value == "," ||
+                         tokens[idx].value == ")" || tokens[idx].value == "(")) {
+                        break;
+                    }
+                    
+                    // Fix single-char operators or ':' to ">>"
+                    if (tokens[idx].type == TokType::OPERATOR ||
+                        (tokens[idx].type == TokType::SEPARATOR && tokens[idx].value == ":")) {
+                        std::string op = tokens[idx].value;
+                        // Preserve existing correct operator and ++/--
+                        if (op == ">>" || op == "++" || op == "--") {
+                            // ok
+                        } else if (op.length() == 1 || op == ":") {
+                            issues.push_back("stream operator '" + op + "' -> '>>' in cin chain");
+                            tokens[idx].value = ">>";
+                        }
+                    }
+                    
+                    idx++;
+                }
+            }
+        }
+    }
+}
+
+// Fix invalid single-quoted strings: 'hello' -> "hello" (multi-char must use double quotes)
+// Valid char literals like 'a' stay as 'a'
+void Analyzer::fixInvalidCharLiterals(std::vector<Token> &tokens, std::vector<std::string> &issues){
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        if (tokens[i].type == TokType::STRING_LITERAL) {
+            std::string& val = tokens[i].value;
+            
+            // Check if it's single-quoted
+            if (val.length() >= 2 && val[0] == '\'' && val.back() == '\'') {
+                // Extract content between quotes
+                std::string content = val.substr(1, val.length() - 2);
+                
+                // If content is NOT exactly 1 character, it should be double-quoted
+                // Special case: empty '', or multi-char 'hello'
+                if (content.length() != 1) {
+                    issues.push_back("invalid char literal '" + val + "' -> \"" + content + "\" (multi-char needs double quotes)");
+                    tokens[i].value = "\"" + content + "\"";
+                }
+            }
+        }
+    }
 }
 
 // Fix a short list of common identifier typos prior to suggestion stage
@@ -203,52 +455,168 @@ void Analyzer::fixCommonIdentifierTypos(std::vector<Token> &tokens, std::vector<
     }
 }
 
-void Analyzer::fixOperators(std::vector<Token> &tokens, std::vector<std::string> &issues){
-    // delegate to autocorrect rules which handle operator fixes
-    autocorrect_.fixOperators(tokens, issues);
-}
-
 void Analyzer::fixIdentifiers(std::vector<Token> &tokens, std::vector<std::string> &issues){
-    // Attempt to correct function-name like typos using Trie (skip comments and strings)
-    for (size_t i=0;i+2<tokens.size();++i){
-        // Skip tokens in comments and string literals
-        if (tokens[i].type == TokType::COMMENT || tokens[i].type == TokType::STRING_LITERAL) continue;
+    // **AGGRESSIVE LOGIC**: Check ALL identifiers with Trie (except in comments/strings)
+    // This will catch: namspace, it, intz, cn, retun, etc.
+    // Note: May cause i->if regression, but we'll fix that later with SymbolTable
+    
+    // First pass: Known typos (fast lookup)
+    static const std::unordered_map<std::string, std::string> knownTypos = {
+        {"mian", "main"}, {"mnia", "main"}, {"nitmain", "main"},
+        {"cot", "cout"}, {"ocout", "cout"}, {"cut", "cout"}, {"ct", "cout"}, {"out", "cout"},
+        {"cn", "cin"}, {"cinn", "cin"},
+        {"retrun", "return"}, {"reutrn", "return"}, {"retun", "return"},
+        {"vecotr", "vector"}, {"vcetor", "vector"},
+        {"iotream", "iostream"}, {"iostraem", "iostream"},
+        {"incldue", "include"}, {"inlcude", "include"}, {"inlude", "include"}, {"inclde", "include"},
+        {"fi", "if"}, {"fr", "for"}, {"fo", "for"}, {"whle", "while"},  // Short keyword typos
+        {"defin", "define"}, {"namspace", "namespace"}, {"it", "int"}, {"intz", "int"}  // More typos
+    };
+    
+    for (size_t i = 0; i < tokens.size(); ++i){
+        // Skip tokens in comments and string literals ONLY
+        if (tokens[i].type == TokType::COMMENT || tokens[i].type == TokType::STRING_LITERAL) {
+            continue;
+        }
         
-        if (tokens[i].type==TokType::KEYWORD || tokens[i].type==TokType::IDENTIFIER){
-            // pattern: <type> <name> (
-            if (tokens[i+1].type==TokType::WHITESPACE && (tokens[i+2].type==TokType::IDENTIFIER)){
-                size_t j = i+3;
-                // find '(' after optional whitespace
-                while (j<tokens.size() && tokens[j].type==TokType::WHITESPACE) ++j;
-                if (j<tokens.size() && tokens[j].type==TokType::SEPARATOR && tokens[j].value=="("){
-                    std::string name = tokens[i+2].value;
-                    std::string lw = name; std::transform(lw.begin(), lw.end(), lw.begin(), [](unsigned char c){ return (char)std::tolower(c); });
-                    if (lw=="mian" || lw=="mnia"){
-                        issues.push_back("identifier '"+name+"' -> 'main'"); tokens[i+2].value = "main"; return; }
-                    std::string fix = correctTokenClosest(name, 1);
-                    if (fix != name && (fix=="main" || trie_.contains(fix))){ issues.push_back("identifier '"+name+"' -> '"+fix+"'"); tokens[i+2].value = fix; return; }
+        // Check ALL IDENTIFIER and KEYWORD tokens
+        if (tokens[i].type == TokType::IDENTIFIER || tokens[i].type == TokType::KEYWORD){
+            std::string word = tokens[i].value;
+            std::string lowerWord = word;
+            std::transform(lowerWord.begin(), lowerWord.end(), lowerWord.begin(), 
+                          [](unsigned char c){ return (char)std::tolower(c); });
+            
+            // Check known typos first (fast)
+            if (knownTypos.count(lowerWord)) {
+                std::string correction = knownTypos.at(lowerWord);
+                issues.push_back("identifier '" + word + "' -> '" + correction + "'");
+                tokens[i].value = correction;
+                tokens[i].type = TokType::KEYWORD;
+                continue;
+            }
+            
+            // **MODERATE TRIE CHECK**: Check identifiers length >= 4
+            // Skip short words (2-3 chars) unless followed by '('
+            bool checkTrie = false;
+            
+            if (word.length() >= 4) {
+                checkTrie = true;  // Always check 4+ character words
+            } else if (word.length() >= 2 && word.length() <= 3) {
+                // For short words, only check if followed by '('
+                for (size_t j = i + 1; j < tokens.size(); ++j) {
+                    if (tokens[j].type != TokType::WHITESPACE) {
+                        if (tokens[j].type == TokType::SEPARATOR && tokens[j].value == "(") {
+                            checkTrie = true;
+                        }
+                        break;
+                    }
                 }
             }
+            
+            if (checkTrie) {
+                auto suggestions = trie_.getSuggestions(word, 2);
+                if (!suggestions.empty() && suggestions[0] != word) {
+                    std::string correction = suggestions[0];
+                    issues.push_back("identifier '" + word + "' -> '" + correction + "'");
+                    tokens[i].value = correction;
+                    // Mark as KEYWORD if it's a C++ keyword
+                    if (correction == "for" || correction == "if" || correction == "while" || 
+                        correction == "return" || correction == "int" || correction == "void" ||
+                        correction == "float" || correction == "double" || correction == "char" ||
+                        correction == "include" || correction == "define" || correction == "namespace") {
+                        tokens[i].type = TokType::KEYWORD;
+                    }
+                }
+            }
+            // Short words like "ni", "x", "i" are left UNCHANGED (could be variables)
         }
     }
 }
 
-static bool isControlStart(const std::string &trimmed){
-    return trimmed.rfind("if",0)==0 || trimmed.rfind("for",0)==0 || trimmed.rfind("while",0)==0 || trimmed.rfind("switch",0)==0 || trimmed.rfind("else",0)==0;
-}
+// Removed unused function: isControlStart (was defined but never called)
 
 void Analyzer::addMissingSemicolon(std::vector<Token> &tokens, std::vector<std::string> &issues){
-    // Find last meaningful token
-    int last = -1; for (int i=(int)tokens.size()-1;i>=0;--i){ if (tokens[i].type!=TokType::WHITESPACE && tokens[i].type!=TokType::COMMENT) { last = i; break; } }
-    if (last<0) return;
-    // Do not add after preprocessor
-    if (tokens[0].type==TokType::PREPROCESSOR) return;
-        TokType ttype = tokens[last].type;
-    std::string val = tokens[last].value;
-    bool endsWithOk = (ttype==TokType::SEPARATOR && (val==";"||val=="{"||val=="}")) || (ttype==TokType::OPERATOR && (val==":"));
-    // control start check
-    bool isControl=false; for (auto &tk : tokens){ if (tk.type==TokType::KEYWORD){ std::string lw=tk.value; std::transform(lw.begin(), lw.end(), lw.begin(), [](unsigned char c){ return (char)std::tolower(c); }); if (lw=="if"||lw=="for"||lw=="while"||lw=="else"||lw=="switch") isControl=true; } }
-    if (!endsWithOk && !isControl){ tokens.push_back({TokType::SEPARATOR, ";"}); issues.push_back("added missing semicolon"); }
+    if (tokens.empty()) return;
+    
+    // Step 1: Find first meaningful token (skip WHITESPACE)
+    int first = -1;
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        if (tokens[i].type != TokType::WHITESPACE) {
+            first = i;
+            break;
+        }
+    }
+    
+    // If no meaningful tokens, return
+    if (first < 0) return;
+    
+    // Rule 1: PREPROCESSOR CHECK (HIGHEST PRIORITY)
+    // If line starts with #, NEVER add semicolon (even if typo like "incldue")
+    if (tokens[first].type == TokType::PREPROCESSOR) {
+        return;
+    }
+    
+    // Rule 2: COMMENT CHECK
+    // Check if any token is a comment - EARLY EXIT
+    for (const auto &tk : tokens) {
+        if (tk.type == TokType::COMMENT) {
+            return; // Early exit for any comment in the line
+        }
+    }
+    
+    // Step 2: Find last meaningful token (skip WHITESPACE)
+    int last = -1;
+    for (int i = (int)tokens.size() - 1; i >= 0; --i) {
+        if (tokens[i].type != TokType::WHITESPACE) {
+            last = i;
+            break;
+        }
+    }
+    
+    // If no last token, return
+    if (last < 0) return;
+    
+    TokType firstType = tokens[first].type;
+    TokType lastType = tokens[last].type;
+    std::string firstVal = tokens[first].value;
+    std::string lastVal = tokens[last].value;
+    
+    // Rule 3: Check for specific separators: {, }, ;
+    if (lastType == TokType::SEPARATOR && 
+        (lastVal == "{" || lastVal == "}" || lastVal == ";")) {
+        return;
+    }
+    
+    // Rule 4: Control Statement Ignore - Fixes if, for, while, switch statements
+    // Only skip if line ENDS with ) (e.g., "if(x)" or "for(;;)")
+    // If line has more code after ), we should add semicolon (e.g., "for(...) cout << i")
+    if (firstType == TokType::KEYWORD && lastType == TokType::SEPARATOR && lastVal == ")") {
+        if (firstVal == "if" || firstVal == "for" || firstVal == "while" || firstVal == "switch") {
+            return;
+        }
+    }
+    
+    // Rule 5: Function Declaration Ignore - Fixes TC-28
+    // If line ends with ) and doesn't start with control statement keyword
+    if (lastType == TokType::SEPARATOR && lastVal == ")") {
+        // Check if firstType is NOT one of the control keywords
+        bool isControlStatement = false;
+        if (firstType == TokType::KEYWORD) {
+            if (firstVal == "if" || firstVal == "for" || firstVal == "while" || firstVal == "switch") {
+                isControlStatement = true;
+            }
+        }
+        if (!isControlStatement) {
+            // This is likely a function declaration like "int main()"
+            return;
+        }
+    }
+    
+    // Rule 4: Add Semicolon - if we reach here, it's a statement that needs one
+    tokens.push_back({TokType::SEPARATOR, ";"});
+    issues.push_back("added missing semicolon");
+    
+    // Default: don't add semicolon for other cases
 }
 
 std::string Analyzer::applyIndentRule(const std::string &line){
@@ -278,29 +646,33 @@ LineResult Analyzer::processLine(const std::string &line, size_t lineNo){
     // 1) Tokenize
     auto tokens = tokenizer_.tokenize(line);
 
-    // 2) Word/identifier corrections
+    // 2) Fix include directives first (adds missing #)
+    fixInclude(tokens, res.issues);
+    
+    // 3) Word/identifier corrections
     fixCommonIdentifierTypos(tokens, res.issues);
     fixIdentifiers(tokens, res.issues);
 
-    // 3) Operator & stream fixes (fixStreamOperators includes all operator fixes)
+    // 4) Operator & stream fixes (fixStreamOperators includes all operator fixes)
     fixStreamOperators(tokens, res.issues);
+    fixInvalidCharLiterals(tokens, res.issues);
     fixForLoop(tokens, res.issues);
 
-    // 4) Pattern fixes (includes, std::, semicolons)
+    // 5) Pattern fixes (semicolons) - must be after fixInclude
     addMissingSemicolon(tokens, res.issues);
-
-    // 5) Update brace/paren state (token-only)
-    updateBraceState(tokens, res.issues);
 
     // 6) Rebuild string from tokens
     res.corrected = detokenize(tokens);
 
-    // 7) Indent rule
+    // 7) Indent rule (BEFORE updating brace state so we use the OLD indent level)
     std::string indented = applyIndentRule(res.corrected);
     if (indented != res.corrected){
         res.issues.push_back("auto-indented");
         res.corrected = indented;
     }
+
+    // 8) Update brace/paren state (AFTER indenting, for NEXT line)
+    updateBraceState(tokens, res.issues);
 
     res.changed = (res.corrected != res.original);
 

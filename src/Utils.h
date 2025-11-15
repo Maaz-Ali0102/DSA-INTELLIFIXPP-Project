@@ -44,19 +44,16 @@ private:
     std::vector<char> braceStack_;
     int indent_ = 0;
 
-    std::unordered_map<std::string,std::string> opFix_;
-
     void seedDictionary();
 
     std::string trim(const std::string &s);
-    bool endsWith(const std::string &s, const std::string &suf);
 
     // Token-based fix functions (operate on token streams)
     void fixInclude(std::vector<Token> &tokens, std::vector<std::string> &issues);
     void fixForLoop(std::vector<Token> &tokens, std::vector<std::string> &issues);
-    void fixOperators(std::vector<Token> &tokens, std::vector<std::string> &issues);
     // Normalize common stream operator and identifier typos before suggestions
     void fixStreamOperators(std::vector<Token> &tokens, std::vector<std::string> &issues);
+    void fixInvalidCharLiterals(std::vector<Token> &tokens, std::vector<std::string> &issues);
     void fixCommonIdentifierTypos(std::vector<Token> &tokens, std::vector<std::string> &issues);
     void fixIdentifiers(std::vector<Token> &tokens, std::vector<std::string> &issues);
     void addMissingSemicolon(std::vector<Token> &tokens, std::vector<std::string> &issues);

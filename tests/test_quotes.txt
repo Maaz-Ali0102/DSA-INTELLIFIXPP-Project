@@ -1,0 +1,5 @@
+cut > 'hello'
+cot > 'world'
+cn > 'test'
+cut > 'h'
+cot>'hello'>'a'>x

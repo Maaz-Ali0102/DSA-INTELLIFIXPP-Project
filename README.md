@@ -1,402 +1,216 @@
-# 🔧 IntelliFix++ - DSA-Powered C++ Auto-Corrector
+# IntelliFix++ (Phase 1.5)
+### A Robust C++ Syntactic Analyzer & Auto-Corrector
 
-**Phase 1 Complete** | A professional C++ console autocorrect and suggestion system using advanced data structures and algorithms (Trie, Levenshtein DP, FSM Tokenizer, Nested Parenthesis Tracking).
-
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![Tests](https://img.shields.io/badge/tests-14%2F14%20passing-brightgreen)]()
-[![C++ Standard](https://img.shields.io/badge/C%2B%2B-17-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-blue)]()
+Project by: Syed Maaz Ali (Roll: CT-232, Section: E)
 
 ---
 
-## ✨ Special Features
+## 1) Phase 1.5 Changelog — What’s New
 
-- **🎯 Token-Based Pipeline**: FSM tokenizer converts code to semantic token streams for context-aware corrections
-- **🌲 Trie Dictionary**: ~140-150 C++ keywords/STL identifiers with priority-based ranking (O(m) search)
-- **📏 Levenshtein Distance**: Single-row optimized DP algorithm (O(m×n) time, O(m) space)
-- **🧠 Frequency Biasing**: 27 high-frequency words scored for intelligent suggestion ranking
-- **🔍 Nested Parenthesis Tracking**: Depth counter algorithm for context-aware for-loop comma replacement
-- **✅ 100% Test Coverage**: 14 comprehensive test cases, all passing
+This release focuses on reliability and real-world “human testing” fixes. The engine is now far better at handling messy, no-space code and context-aware typos without over-correcting valid variables.
 
----
-
-## 📋 Features
-
-| Category | Feature | Status |
-|----------|---------|--------|
-| **Stream Operators** | Fix `cout <` → `cout <<`, `cin >` → `cin >>` | ✅ |
-| **For-Loop Syntax** | Replace top-level commas with semicolons, preserve nested commas | ✅ |
-| **Missing Semicolons** | Detect and insert missing `;` after statements | ✅ |
-| **Identifier Typos** | Correct misspelled identifiers using Trie + edit distance | ✅ |
-| **Assignment in Conditionals** | Fix `if (x = 5)` → `if (x == 5)` | ✅ |
-| **Comment/String Protection** | Skip corrections inside comments and string literals | ✅ |
-| **Auto-Indentation** | Apply 4-space indentation based on brace depth | ✅ |
-| **Bracket Validation** | Detect unmatched `{}`, `()`, `[]` | ✅ |
-| **Preprocessor Fixes** | Correct `includ` → `include`, `iotream` → `iostream` | ✅ |
-
----
-
-## 🎮 User Modes
-
-### 1️⃣ Interactive Mode (Line-by-Line)
-- Enter C++ code line by line
-- Real-time analysis and correction suggestions
-- Commands: `:quit`, `:save <filename>`, `:show`
-- Separate analysis console window (Windows)
-
-### 2️⃣ File Upload Mode (Batch Processing)
-- Provide path to C++ source file
-- System analyzes and corrects entire file
-- Outputs `corrected_<filename>.cpp` in same directory
-- Detailed fix log saved to `output/fixes.log`
+- Robust Tokenizer (Tokenizer.h/.cpp)
+  - Upgraded FSM to split at type boundaries, so no-space code is parsed correctly:
+    - `intx=5;` → tokens: `int`, `x`, `=`, `5`, `;`
+    - `i=0i<n` → tokens: `i`, `=`, `0`, `i`, `<`, `n`
+- Context-Aware Typos (Utils.cpp → Analyzer::fixIdentifiers)
+  - Smart correction using Trie + rules:
+    - 4+ character words are checked by default
+    - 2–3 character words checked only in function/keyword contexts (e.g., `fr(` → `for(`)
+    - Short variables like `i`, `x`, `ni` are preserved
+- Smart for(...) Loop Repair (Utils.cpp → Analyzer::fixForLoop)
+  - Now inserts missing semicolons even when there are none:
+    - `for(i=0 i<n i++)` → `for(i=0; i<n; i++)`
+    - `for(i=0i<ni++)` → `for(i=0; i<ni; ++i)` (based on tokens)
+- Robust Stream Operators (Utils.cpp → Analyzer::fixStreamOperators)
+  - Catches any wrong single-char operator or colon after cout/cin and fixes the whole chain:
+    - `cot > "hello"` → `cout << "hello";`
+    - `cn < x` → `cin >> x;`
+    - `cot:"A":x` → `cout<<"A"<<x;`
+    - Preserves `++`/`--` and avoids touching comparisons like `x > y`
+- Invalid Char Literal Repair (Utils.cpp → Analyzer::fixInvalidCharLiterals)
+  - Converts invalid single-quoted strings to proper double-quoted strings:
+    - `'hello'` → `"hello"` (multi-char becomes string)
+    - `'a'` stays `'a'`
 
 ---
 
-## 🏗️ Architecture
+## 2) Project Overview — What It Is
 
-```
-┌─────────────┐
-│  Input Code │
-└──────┬──────┘
-       │
-       v
-┌──────────────────────┐
-│  Tokenizer (FSM)     │  ← Lexical Analysis
-│  TokType enum (9)    │
-└──────┬───────────────┘
-       │
-       v
-┌──────────────────────────────────────┐
-│  Token-Based Correction Pipeline     │
-│  ┌────────────────────────────────┐  │
-│  │ fixCommonIdentifierTypos       │  │
-│  │ fixIdentifiers (Trie+LD)       │  │
-│  │ fixStreamOperators             │  │
-│  │ fixForLoop (nested parens)     │  │
-│  │ addMissingSemicolon            │  │
-│  │ updateBraceState               │  │
-│  └────────────────────────────────┘  │
-└──────┬───────────────────────────────┘
-       │
-       v
-┌──────────────────────┐
-│  Detokenizer         │  ← Context-aware spacing
-└──────┬───────────────┘
-       │
-       v
-┌──────────────────────┐
-│  Auto-Indentation    │  ← Brace depth tracking
-└──────┬───────────────┘
-       │
-       v
-┌──────────────────────┐
-│  Logger Output       │
-│  fixes.log           │
-│  analysis.txt        │
-└──────────────────────┘
-```
+IntelliFix++ is a C++ syntactic auto-corrector. It reads C++ code and automatically fixes grammar-level mistakes (operators, keywords, simple punctuation, typos) while preserving valid code.
+
+Modes of operation:
+- Interactive Mode (line-by-line)
+- File Mode (batch fix a .cpp file)
 
 ---
 
-## 🚀 Installation
+## 3) How It Works — The Token-Based Engine
 
-### Prerequisites
-- **g++** with C++17 support (MSYS2 UCRT64 recommended for Windows)
-- **Git** for cloning repository
-- **Windows** (optional analysis window feature requires Windows)
+Pipeline:
+`Input String` → 1) Tokenizer → 2) Analyzer (Fixers) → 3) Detokenizer → `Output String`
 
-### Build Instructions
+- Tokenizer (Tokenizer.h/.cpp)
+  - FSM-based lexer producing token types like KEYWORD, IDENTIFIER, OPERATOR, SEPARATOR, STRING_LITERAL, COMMENT, WHITESPACE, NUMBER, PREPROCESSOR
+- Analyzer (Utils.h/.cpp → class Analyzer)
+  - Runs ordered fixers over the token stream:
+    - `fixInclude` (adds missing `#`, fixes include typos)
+    - `fixCommonIdentifierTypos` + `fixIdentifiers` (Trie-backed typo recovery)
+    - `fixStreamOperators` (normalizes operators after cout/cin, supports `:`)
+    - `fixInvalidCharLiterals` ("'hello'" → "\"hello\"")
+    - `fixForLoop` (inserts missing `;` in for headers)
+    - `addMissingSemicolon` (adds `;` for plain statements)
+  - `updateBraceState` and `applyIndentRule` handle scope/indentation
+- Detokenizer (Utils.cpp)
+  - Rebuilds corrected tokens back to a clean line
 
-```bash
-# Clone repository
-git clone https://github.com/Maaz-Ali0102/DSA-INTELLIFIXPP-Project.git
-cd DSA-INTELLIFIXPP-Project
-
-# Compile main program
-g++ -std=c++17 -Wall -Wextra -g3 src/main.cpp src/Utils.cpp src/Trie.cpp src/Tokenizer.cpp src/Autocorrect.cpp src/Logger.cpp src/SymbolTable.cpp -o IntelliFixPP.exe
-
-# Compile test suite
-g++ -std=c++17 -Wall -Wextra -g3 tests/comprehensive_tests.cpp src/Utils.cpp src/Trie.cpp src/Tokenizer.cpp src/Autocorrect.cpp src/Logger.cpp src/SymbolTable.cpp -o comprehensive_tests.exe
-```
-
-### Alternative Toolchains
-
-```bash
-# MSYS2 UCRT64 (recommended for Windows)
-"C:/msys64/ucrt64/bin/g++.exe" -std=c++17 -Wall -Wextra -g3 src/main.cpp src/Utils.cpp src/Trie.cpp src/Tokenizer.cpp src/Autocorrect.cpp src/Logger.cpp src/SymbolTable.cpp -o IntelliFixPP.exe
-
-# MinGW
-"C:/msys64/mingw64/bin/g++.exe" -std=c++17 -Wall -Wextra -g3 src/main.cpp src/Utils.cpp src/Trie.cpp src/Tokenizer.cpp src/Autocorrect.cpp src/Logger.cpp src/SymbolTable.cpp -o IntelliFixPP.exe
-
-# Clang (if installed)
-clang++ -std=c++17 -Wall -Wextra -g src/main.cpp src/Utils.cpp src/Trie.cpp src/Tokenizer.cpp src/Autocorrect.cpp src/Logger.cpp src/SymbolTable.cpp -o IntelliFixPP.exe
-```
+Key sources: `src/Tokenizer.*`, `src/Utils.*`, `src/Trie.*`, `src/SymbolTable.*`, `src/Logger.*`
 
 ---
 
-## 📖 Usage
+## 4) DSA & Algorithms Used (VIP Logic)
 
-### Running the Main Program
+- Hashing
+  - Tokenizer keyword tables (O(1) lookup)
+  - SymbolTable uses `std::unordered_set`/maps for O(1) declared-name checks
+- Stack
+  - `Analyzer::braceStack_` tracks `{}`, `()`, `[]` for indentation and balance
+  - `SymbolTable::scopes_` (stack of scope sets) for local vs global
+- Trie (Prefix Tree) — `src/Trie.*`
+  - Stores curated C++ dictionary (~140+ words) and priorities
+  - `Trie::getSuggestions` returns closest matches
+- Dynamic Programming (DP)
+  - `Trie::editDistance` (Levenshtein) used to score typo distance
+- Sorting (rank best suggestions)
+  - `std::sort` in `Trie::getSuggestions` to prioritize keywords (`cout` over `const`)
+- FSM (Finite State Machine)
+  - `Tokenizer::tokenize` is an FSM that transitions across states (idle/string/comment/etc.)
 
-```bash
-# Windows
-.\IntelliFixPP.exe
-
-# Linux/Mac
-./IntelliFixPP.exe
-```
-
-### Example: Interactive Mode
-
-```bash
-$ .\IntelliFixPP.exe
-=== IntelliFix++ Auto-Corrector ===
-Choose mode:
-1. Interactive (line-by-line)
-2. Upload file
-Enter choice: 1
-
-Enter C++ code (type :quit to exit, :save <filename> to save, :show to display all):
-> cout < "Hello World" << endl
-FIXED: cout << "Hello World" << endl
-
-> for(int i=0, j=10, k=20)
-FIXED: for(int i=0; j=10; k=20)
-
-> :save fixed_code.cpp
-Code saved to: fixed_code.cpp
-```
-
-### Example: File Upload Mode
-
-```bash
-$ .\IntelliFixPP.exe
-=== IntelliFix++ Auto-Corrector ===
-Choose mode:
-1. Interactive (line-by-line)
-2. Upload file
-Enter choice: 2
-
-Enter file path: test_sample.cpp
-Reading file: test_sample.cpp
-Processing 17 lines...
-Applied 9 corrections
-Output saved to: corrected_test_sample.cpp
-Fix log saved to: output/fixes.log
-```
-
-### Output Files
-- `output/fixes.log` - Detailed log of all corrections applied with line numbers
-- `output/analysis.txt` - Human-readable analysis for current context
-- `corrected_*.cpp` - Corrected versions of input files (File mode only)
-
----
-
-## 🧪 Test Results
-
-All 14 comprehensive test cases passing (100% success rate):
-
-| Test ID | Description | Status |
-|---------|-------------|--------|
-| TC-001 | Stream operator fixes (`cout <` → `cout <<`) | ✅ PASS |
-| TC-002 | Multiple stream operators in one line | ✅ PASS |
-| TC-003 | For-loop comma replacement (simple) | ✅ PASS |
-| TC-004 | For-loop with nested function calls `max(a,b)` | ✅ PASS |
-| TC-005 | For-loop with variable declarations `int i=0, j=0` | ✅ PASS |
-| TC-006 | Missing semicolon detection | ✅ PASS |
-| TC-007 | Identifier typo correction (`mian` → `main`) | ✅ PASS |
-| TC-008 | Assignment in conditional (`=` → `==`) | ✅ PASS |
-| TC-009 | Comment protection (no corrections inside) | ✅ PASS |
-| TC-010 | String literal protection | ✅ PASS |
-| TC-011 | Indentation with nested braces | ✅ PASS |
-| TC-012 | Bracket validation (detect unmatched) | ✅ PASS |
-| TC-013 | Combined corrections (multiple fixes) | ✅ PASS |
-| TC-014 | Edge case: Empty lines and whitespace | ✅ PASS |
-
-**Run tests yourself:**
-```bash
-.\comprehensive_tests.exe
-```
-
-See [case_test_14_nov_update_file.md](case_test_14_nov_update_file.md) for detailed test inputs/outputs.
-
----
-
-## 📖 API Usage
-
-### Tokenizer
+Code snippets (excerpts):
 
 ```cpp
-#include "Tokenizer.h"
-
-std::string code = "cout << \"Hello\";";
-std::vector<Token> tokens = tokenize(code);
-
-for (const auto& tok : tokens) {
-    std::cout << tok.value << " [" << (int)tok.type << "]\n";
+// Trie::editDistance (DP) — src/Trie.cpp
+int Trie::editDistance(const std::string &a, const std::string &b){
+    const int n = a.size(), m = b.size();
+    std::vector<int> dp(m + 1);
+    for (int j = 0; j <= m; ++j) dp[j] = j;
+    for (int i = 1; i <= n; ++i){
+        int prev = dp[0]; dp[0] = i;
+        for (int j = 1; j <= m; ++j){
+            int tmp = dp[j];
+            dp[j] = (a[i-1]==b[j-1]) ? prev : std::min({prev+1, dp[j]+1, dp[j-1]+1});
+            prev = tmp;
+        }
+    }
+    return dp[m];
 }
 ```
 
-### Autocorrect with Trie
+---
 
-```cpp
-#include "Trie.h"
-#include "Autocorrect.h"
+## 5) Features & Edge Cases Handled
 
-Trie trie;
-trie.loadDefaultDictionary();
+What it fixes:
+- `cout > x` → `cout << x` (and chains)
+- `cn < x` → `cin >> x`
+- `for(i=0 i<n i++)` → `for(i=0; i<n; i++)`
+- `incldue <iostream>` → `#include <iostream>`
+- `fr(a,b)` → `for(a,b)` (when in keyword context)
+- `nitmain()` → `main()`
+- `'hello'` → `"hello"` (multi-char char literal → string)
 
-// Get suggestions
-auto suggestions = trie.getSuggestions("includ", 2);
-// Returns: ["include"] (Priority 0)
-
-Autocorrect ac(trie);
-std::string fixed = ac.autocorrectLine("cout < \"Hello\"");
-// Returns: "cout << \"Hello\""
-```
-
-### Analyzer Pipeline
-
-```cpp
-#include "Utils.h"
-#include "Logger.h"
-
-Trie trie;
-trie.loadDefaultDictionary();
-
-Logger logger("output/fixes.log");
-Analyzer analyzer(trie, logger);
-
-std::string line = "for(int i=0, j=10, k=20)";
-std::string corrected = analyzer.processLine(line);
-// Returns: "for(int i=0; j=10; k=20)"
-```
-
-See [TRIE_AUTOCORRECT.md](TRIE_AUTOCORRECT.md) for more API details.
+What it ignores:
+- `// comments` and string literals `"inside quotes"`
+- Valid commas like `for(int i=0, j=0; ...)`
+- Short variables like `i`, `x`, `ni` (won’t become `if`/`cin`)
 
 ---
 
-## 📂 Project Structure
+## 6) How to Use (Build & Run)
+
+Prerequisite: a C++17 compiler (g++/clang++)
+
+Build (Windows PowerShell):
+
+```powershell
+g++ -std=c++17 -Wall -Wextra -I src src/main.cpp src/Utils.cpp src/Trie.cpp src/Logger.cpp src/SymbolTable.cpp src/Autocorrect.cpp src/Tokenizer.cpp -o IntelliFixPP.exe
+```
+
+Run:
+
+```powershell
+.\n+IntelliFixPP.exe
+```
+
+Modes:
+- Select 1 for Interactive (type lines, see fixes)
+- Select 2 for File Mode and provide a .cpp path
+
+---
+
+## 7) Known Limitations (To Watch Out For)
+
+- Semantic analysis not active yet: 
+  - Using undeclared variables won’t be flagged (e.g., `y = 5;` passes)
+- Line-by-line engine: 
+  - Complex multi-line constructs (e.g., split statements) may lose context
+- English comments:
+  - Spell-checker intentionally ignores natural language inside comments
+- Some rare variable names that resemble keywords (e.g., `fo`) may be over-corrected
+- Preprocessor `define` edge cases: inserting `#` and avoiding `;` is planned refinement
+
+---
+
+## 8) Next Steps — Phase 2 Plan
+
+- Activate and fully integrate `SymbolTable` for semantic checks
+  - “Use of undeclared identifier”, duplicate declarations, scope-aware protections
+- Smarter space-preservation around split identifiers (e.g., `inti` → `int i`)
+- Improve nested statement semicolon inference inside `{}` blocks
+- Expand dictionary and prioritization for STL and headers
+
+---
+
+## 9) Accessibility Impact
+
+By automatically fixing common syntax errors (like missing `;`, wrong stream operators, and typos), IntelliFix++ reduces friction and cognitive load for learners. This is especially helpful for users who experience motor or cognitive challenges and benefit from tools that reduce repetitive correction tasks.
+
+---
+
+## 10) Project Structure
 
 ```
 IntelliFixPP/
 ├── src/
-│   ├── main.cpp              # CLI interface and mode handling
-│   ├── Tokenizer.h/.cpp      # FSM-based lexical analyzer (Token, TokType enum)
-│   ├── Autocorrect.h/.cpp    # Correction engine with Trie + Levenshtein DP
-│   ├── Trie.h/.cpp           # Priority-based dictionary (~140-150 words)
-│   ├── Utils.h/.cpp          # Analyzer with token-based correction pipeline
-│   ├── Logger.h/.cpp         # Logging and analysis output
-│   └── SymbolTable.h/.cpp    # Scoped symbol tracking
-├── tests/
-│   ├── comprehensive_tests.cpp  # 14 test cases (100% passing)
-│   ├── test_file_mode.cpp       # File upload mode validator
-│   ├── test_trie.cpp            # Trie unit tests
-│   ├── demo_autocorrect.cpp     # Interactive demo
-│   └── simple_example.cpp       # Basic usage example
-├── output/                      # Build artifacts and logs
-│   ├── fixes.log                # Detailed correction log
-│   └── analysis.txt             # Human-readable analysis
-├── case_test_14_nov_update_file.md  # Test results tracking
-├── TRIE_AUTOCORRECT.md          # Detailed Trie API documentation
-├── IMPLEMENTATION_SUMMARY.md    # Phase 1 completion summary
-├── QUICK_REFERENCE.md           # Quick start guide
-├── .gitignore                   # Git ignore rules
-└── README.md                    # This file
+│   ├── main.cpp
+│   ├── Utils.h/.cpp          # Analyzer (token-based pipeline, fixers)
+│   ├── Tokenizer.h/.cpp      # FSM tokenizer
+│   ├── Trie.h/.cpp           # Dictionary + edit distance + ranking
+│   ├── Autocorrect.h/.cpp    # Operator rules and helpers
+│   ├── Logger.h/.cpp         # Logging (fixes, analysis)
+│   └── SymbolTable.h/.cpp    # Scopes (planned Phase 2 integration)
+├── tests/                    # Test drivers and scenarios
+└── output/                   # Logs and corrected outputs
 ```
 
 ---
 
-## 🧮 Algorithms & Data Structures
+## 11) Quick Examples
 
-### 1. **Trie (Prefix Tree)**
-- **Purpose**: Fast dictionary lookup and prefix-based suggestions
-- **Implementation**: 
-  - Node structure with `children[128]` array for ASCII characters
-  - Priority-based ranking: 0 (critical keywords), 1 (common STL), 2 (user-defined)
-  - ~53 Priority 0 words (if, else, for, int, main, cout, cin, etc.)
-  - ~80 Priority 1 words (vector, string, map, iostream, push_back, sort, etc.)
-- **Complexity**:
-  - Insert: O(m) where m = word length
-  - Search: O(m)
-  - getSuggestions: O(k × n) where k = dictionary size, n = average word length
+```text
+Input : cot > 'hello'
+Output: cout << "hello";
 
-### 2. **Levenshtein Distance (Edit Distance)**
-- **Purpose**: Measure similarity between misspelled word and dictionary words
-- **Implementation**: 
-  - Single-row optimized dynamic programming
-  - Max edit distance: 2 (configurable)
-  - Operations: insertion, deletion, substitution (each cost = 1)
-- **Complexity**:
-  - Time: O(m × n) where m, n = lengths of two strings
-  - Space: O(m) - optimized from O(m × n) using rolling array
+Input : for(i=0 i<10 i++)
+Output: for(i=0; i<10; i++)
 
-### 3. **Finite State Machine (FSM) Tokenizer**
-- **Purpose**: Convert raw code into semantic token stream
-- **Implementation**:
-  - 9 token types: KEYWORD, IDENTIFIER, OPERATOR, SEPARATOR, STRING_LITERAL, COMMENT, WHITESPACE, NUMBER, PREPROCESSOR, UNKNOWN
-  - State transitions based on character classes
-  - Handles multi-character operators (<<, >>, ==, !=, <=, >=)
-- **Complexity**: O(n) where n = code length (single pass)
-
-### 4. **Nested Parenthesis Tracking**
-- **Purpose**: Context-aware for-loop comma replacement
-- **Implementation**:
-  - Depth counter tracking `(` and `)` characters
-  - Semicolon counting at depth 0
-  - Only replace commas when depth = 0 and semicolon count < 2
-- **Complexity**: O(n) where n = token count in for-loop header
-
-### 5. **Frequency Biasing**
-- **Purpose**: Rank suggestions by usage frequency
-- **Implementation**:
-  - Hash map with 27 high-frequency words (include, iostream, main, cout, cin, vector, string, etc.)
-  - Base score = 1000 for frequent words
-  - Ranking formula: `priority * 10000 + editDistance * 100 - frequencyBonus`
-- **Complexity**: O(1) lookup per word
-
-### 6. **Priority Queue (Implicit)**
-- **Purpose**: Sort suggestions by priority, edit distance, and frequency
-- **Implementation**: std::sort with custom comparator
-- **Complexity**: O(k log k) where k = number of suggestions
+Input : incldue <iostream>
+Output: #include <iostream>
+```
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Here are some areas for enhancement:
-
-### Phase 2 (Planned Features)
-- [ ] Multi-line tokenization states (multi-line comments, raw strings)
-- [ ] C++20/23 keyword support (concept, requires, co_await, etc.)
-- [ ] Enhanced bracket matching with suggestions
-- [ ] Support for templates and namespace corrections
-- [ ] GUI interface (Qt or Dear ImGui)
-
-### Phase 3 (Advanced Features)
-- [ ] Machine learning-based correction ranking
-- [ ] Support for other languages (Python, Java, JavaScript)
-- [ ] IDE integration (VS Code extension, Vim plugin)
-- [ ] Real-time linting with LSP support
-
-### How to Contribute
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📊 Performance Metrics
-
-- **Tokenization Speed**: ~1M tokens/second (single-threaded)
-- **Trie Lookup**: O(m) - typically < 1µs per word
-- **Levenshtein Calculation**: ~50-100µs per word comparison (edit distance ≤ 2)
-- **Full Pipeline**: ~2-5ms per line (average 50 characters)
-- **Memory Usage**: ~2MB (Trie + token buffers + frequency map)
-
-**Tested on**: Windows 10, Intel i5-8250U, 8GB RAM, g++ MSYS2 UCRT64
+© 2025 Syed Maaz Ali — DSA-INTELLIFIXPP-Project
 
 ---
 

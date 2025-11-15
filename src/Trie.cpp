@@ -115,13 +115,15 @@ void Trie::loadDefaultDictionary(){
         // Core Types
         "int", "float", "double", "char", "bool", "void", "long", "short", "auto", "size_t",
         // Critical Identifiers
-        "main", "std", "cout", "cin", "cerr", "endl"
+        "main", "std", "cout", "cin", "cerr", "endl",
+        // VIP Headers (moved from p1 to prevent fstream winning over iostream)
+        "iostream", "<iostream>", "stream", "<stream>", "include"
     };
 
     // Priority 1: Common STL Containers, Headers, and Algorithms
     const char* p1[] = {
-        // Headers (without .h or brackets)
-        "iostream", "vector", "string", "map", "set", "unordered_map", "unordered_set", "algorithm",
+        // Headers (without .h or brackets) - iostream moved to p0
+        "vector", "string", "map", "set", "unordered_map", "unordered_set", "algorithm",
         "utility", "memory", "iomanip", "sstream", "fstream", "cmath", "cstdlib", "cstring", "limits",
         "numeric", "iterator", "queue", "stack", "deque", "list", "array", "tuple", "optional", "variant",
         // Common STL Types
