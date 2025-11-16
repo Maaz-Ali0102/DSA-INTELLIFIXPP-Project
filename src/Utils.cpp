@@ -91,7 +91,7 @@ void Analyzer::fixInclude(std::vector<Token> &tokens, std::vector<std::string> &
         // Insert '#' right before the 'include' token (at firstMeaningful position)
         tokens.insert(tokens.begin() + firstMeaningful, {TokType::PREPROCESSOR, "#"});
         issues.push_back("added missing '#' before include");
-        return; // Done fixing
+        // continue to check angle brackets if present
     }
     
     // Check for typos of "include" (like "incldue", "inclde") missing #
@@ -105,7 +105,7 @@ void Analyzer::fixInclude(std::vector<Token> &tokens, std::vector<std::string> &
             // Insert '#' before it
             tokens.insert(tokens.begin() + firstMeaningful, {TokType::PREPROCESSOR, "#"});
             issues.push_back("added missing '#' before include");
-            return; // Done fixing
+            // continue to check angle brackets if present
         }
     }
     
@@ -132,8 +132,52 @@ void Analyzer::fixInclude(std::vector<Token> &tokens, std::vector<std::string> &
                     nextVal = "include";
                 }
             }
+
+            // Robust: Ensure closing '>' for system headers
+            // Find '<' after include and the header identifier; insert '>' if missing
+            int ltIdx = -1;
+            for (size_t i = nextMeaningful + 1; i < tokens.size(); ++i) {
+                if (tokens[i].type == TokType::WHITESPACE) continue;
+                if ((tokens[i].type == TokType::OPERATOR || tokens[i].type == TokType::SEPARATOR) && tokens[i].value == "<") {
+                    ltIdx = static_cast<int>(i);
+                }
+                // stop searching for '<' once we encounter a quote '"' or '{' or ';' etc.
+                if (ltIdx >= 0) break;
+            }
+            if (ltIdx >= 0) {
+                // Find header name token after '<'
+                int headerIdx = -1;
+                for (size_t i = ltIdx + 1; i < tokens.size(); ++i) {
+                    if (tokens[i].type == TokType::WHITESPACE) continue;
+                    // Header usually tokenized as IDENTIFIER
+                    if (tokens[i].type == TokType::IDENTIFIER) {
+                        headerIdx = static_cast<int>(i);
+                    }
+                    // stop after we found header identifier
+                    if (headerIdx >= 0) break;
+                }
+                if (headerIdx >= 0) {
+                    // Find the next meaningful token after header
+                    int afterHeader = -1;
+                    for (size_t i = headerIdx + 1; i < tokens.size(); ++i) {
+                        if (tokens[i].type != TokType::WHITESPACE) { afterHeader = static_cast<int>(i); break; }
+                    }
+                    bool hasClosing = false;
+                    if (afterHeader >= 0) {
+                        if ((tokens[afterHeader].type == TokType::OPERATOR || tokens[afterHeader].type == TokType::SEPARATOR) 
+                            && tokens[afterHeader].value == ">") {
+                            hasClosing = true;
+                        }
+                    }
+                    if (!hasClosing) {
+                        // Insert a closing '>' right after header identifier
+                        tokens.insert(tokens.begin() + headerIdx + 1, {TokType::OPERATOR, ">"});
+                        issues.push_back("inserted missing '>' in #include<...>");
+                    }
+                }
+            }
         }
-        return; // Done checking
+        return; // Done processing include directive
     }
     
     // Delegate other include fixes to Autocorrect's pattern fixes
@@ -585,6 +629,15 @@ void Analyzer::addMissingSemicolon(std::vector<Token> &tokens, std::vector<std::
     if (lastType == TokType::SEPARATOR && 
         (lastVal == "{" || lastVal == "}" || lastVal == ";")) {
         return;
+    }
+
+    // Rule 3.1: Unterminated string at end of line -> DO NOT add semicolon
+    // If last token is STRING_LITERAL and does not end with a double quote (")
+    if (lastType == TokType::STRING_LITERAL) {
+        if (lastVal.empty() || lastVal.back() != '"') {
+            // e.g., cout << "abdulhadi   (unterminated) -> skip semicolon
+            return;
+        }
     }
     
     // Rule 4: Control Statement Ignore - Fixes if, for, while, switch statements
