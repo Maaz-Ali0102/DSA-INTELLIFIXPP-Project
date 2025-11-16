@@ -1,5 +1,36 @@
 # IntelliFix++ Error Fixes - Summary
 
+## Fixes Applied (2025-11-16)
+
+### 1. Avoid semicolon after unterminated strings
+- File: `src/Utils.cpp` (`Analyzer::addMissingSemicolon`)
+- Change: If the last meaningful token on a line is a `STRING_LITERAL` that does not end with `"`, we skip inserting `;`.
+- Impact: Prevents `cout<< "text` and similar lines from being incorrectly terminated.
+
+### 2. Ensure missing '>' in `#include<...>` is inserted in all flows
+- File: `src/Utils.cpp` (`Analyzer::fixInclude`)
+- Changes:
+   - Do not early-return after `# include` handling; run a generic pass that enforces a closing `>` when using `<header>` form.
+   - Accept header tokens that may be classified as `KEYWORD` (e.g., `vector`) when checking for missing `>`.
+- Impact: Robustly fixes lines like `#inclde<iostreem` → `#include<iostream>` and `#include <vector` → `#include <vector>`.
+
+### 3. Small heuristics for human-style typos
+- File: `src/Utils.cpp` (`Analyzer::fixIdentifiers`)
+- Changes:
+   - Split `using namespacestd` → `using namespace std;`.
+   - Split merged type and identifier e.g., `intx=5;` → `int x=5;`.
+- Impact: Improves real-world usability without affecting core tokenization.
+
+### 4. New stress test (local harness)
+- File: `tests/stress_test.cpp`
+- Coverage highlights:
+   - Unterminated string semicolon rule.
+   - Include `>` insertion (with and without `#`).
+   - Stream operator fixes for `cout`/`cin`.
+   - For-loop comma-to-semicolon and missing semicolons.
+   - Heuristic splits (`namespacestd`, `intx`).
+- Result: All scenarios pass on Windows (g++ -std=c++17).
+
 ## Fixes Applied (2025-10-28)
 
 ### 1. **Added Bracket Warning Before Quitting (:quit command)**

@@ -132,54 +132,60 @@ void Analyzer::fixInclude(std::vector<Token> &tokens, std::vector<std::string> &
                     nextVal = "include";
                 }
             }
+            // Fall-through to generic angle bracket ensure below
+        }
+        // Do NOT return here; continue to generic post-processing to ensure closing '>'
+    }
 
-            // Robust: Ensure closing '>' for system headers
-            // Find '<' after include and the header identifier; insert '>' if missing
-            int ltIdx = -1;
-            for (size_t i = nextMeaningful + 1; i < tokens.size(); ++i) {
-                if (tokens[i].type == TokType::WHITESPACE) continue;
-                if ((tokens[i].type == TokType::OPERATOR || tokens[i].type == TokType::SEPARATOR) && tokens[i].value == "<") {
-                    ltIdx = static_cast<int>(i);
-                }
-                // stop searching for '<' once we encounter a quote '"' or '{' or ';' etc.
-                if (ltIdx >= 0) break;
+    // Generic post-processing: if we now have an 'include' near start (with or without '#'),
+    // ensure that a system-header style <...> has a closing '>'
+    {
+        // Find the first non-whitespace token again (it may have changed after inserts)
+        int startIdx = -1; for (size_t i=0;i<tokens.size();++i){ if (tokens[i].type!=TokType::WHITESPACE){ startIdx=(int)i; break; } }
+        if (startIdx >= 0) {
+            int incIdx = -1;
+            // If first is '#', the next meaningful should be 'include'
+            if (tokens[startIdx].type == TokType::PREPROCESSOR && tokens[startIdx].value == "#"){
+                for (size_t i = startIdx + 1; i < tokens.size(); ++i){ if (tokens[i].type!=TokType::WHITESPACE){ if (tokens[i].value=="include") incIdx=(int)i; break; } }
+            } else if ((tokens[startIdx].type == TokType::KEYWORD || tokens[startIdx].type == TokType::IDENTIFIER) && tokens[startIdx].value=="include"){
+                incIdx = startIdx;
             }
-            if (ltIdx >= 0) {
-                // Find header name token after '<'
-                int headerIdx = -1;
-                for (size_t i = ltIdx + 1; i < tokens.size(); ++i) {
+            if (incIdx >= 0){
+                // Look for '<' after include
+                int ltIdx = -1;
+                for (size_t i = incIdx + 1; i < tokens.size(); ++i) {
                     if (tokens[i].type == TokType::WHITESPACE) continue;
-                    // Header usually tokenized as IDENTIFIER
-                    if (tokens[i].type == TokType::IDENTIFIER) {
-                        headerIdx = static_cast<int>(i);
-                    }
-                    // stop after we found header identifier
-                    if (headerIdx >= 0) break;
+                    if ((tokens[i].type == TokType::OPERATOR || tokens[i].type == TokType::SEPARATOR) && tokens[i].value == "<") { ltIdx = (int)i; break; }
+                    // Stop if we encounter quote or '{' or ';' meaning it's not a system header form
+                    if (tokens[i].type == TokType::STRING_LITERAL || (tokens[i].type==TokType::SEPARATOR && (tokens[i].value=="{"||tokens[i].value==";"))) break;
                 }
-                if (headerIdx >= 0) {
-                    // Find the next meaningful token after header
-                    int afterHeader = -1;
-                    for (size_t i = headerIdx + 1; i < tokens.size(); ++i) {
-                        if (tokens[i].type != TokType::WHITESPACE) { afterHeader = static_cast<int>(i); break; }
+                if (ltIdx >= 0){
+                    // Find header identifier/keyword after '<'
+                    int headerIdx = -1;
+                    for (size_t i = ltIdx + 1; i < tokens.size(); ++i) {
+                        if (tokens[i].type == TokType::WHITESPACE) continue;
+                        if (tokens[i].type == TokType::IDENTIFIER || tokens[i].type == TokType::KEYWORD) { headerIdx = (int)i; break; }
+                        // If we hit '>' immediately, we're done
+                        if ((tokens[i].type == TokType::OPERATOR || tokens[i].type == TokType::SEPARATOR) && tokens[i].value == ">") { headerIdx = -2; break; }
                     }
-                    bool hasClosing = false;
-                    if (afterHeader >= 0) {
-                        if ((tokens[afterHeader].type == TokType::OPERATOR || tokens[afterHeader].type == TokType::SEPARATOR) 
-                            && tokens[afterHeader].value == ">") {
-                            hasClosing = true;
+                    if (headerIdx >= 0){
+                        // Check token after header for '>'
+                        int afterHeader = -1;
+                        for (size_t i = headerIdx + 1; i < tokens.size(); ++i) { if (tokens[i].type != TokType::WHITESPACE) { afterHeader = (int)i; break; } }
+                        bool hasClosing = false;
+                        if (afterHeader >= 0){
+                            if ((tokens[afterHeader].type == TokType::OPERATOR || tokens[afterHeader].type == TokType::SEPARATOR) && tokens[afterHeader].value == ">") hasClosing = true;
                         }
-                    }
-                    if (!hasClosing) {
-                        // Insert a closing '>' right after header identifier
-                        tokens.insert(tokens.begin() + headerIdx + 1, {TokType::OPERATOR, ">"});
-                        issues.push_back("inserted missing '>' in #include<...>");
+                        if (!hasClosing){
+                            tokens.insert(tokens.begin() + headerIdx + 1, {TokType::OPERATOR, ">"});
+                            issues.push_back("inserted missing '>' in #include<...>");
+                        }
                     }
                 }
             }
         }
-        return; // Done processing include directive
     }
-    
+
     // Delegate other include fixes to Autocorrect's pattern fixes
     autocorrect_.fixPatterns(tokens, issues);
 }
@@ -518,6 +524,20 @@ void Analyzer::fixIdentifiers(std::vector<Token> &tokens, std::vector<std::strin
     };
     
     for (size_t i = 0; i < tokens.size(); ++i){
+        // Special case: "using namespacestd" -> "using namespace std" (missing space)
+        if (tokens[i].type == TokType::KEYWORD && tokens[i].value == "using"){
+            // find next meaningful token
+            size_t j = i + 1;
+            while (j < tokens.size() && tokens[j].type == TokType::WHITESPACE) ++j;
+            if (j < tokens.size() && tokens[j].type == TokType::IDENTIFIER){
+                std::string lw = tokens[j].value; std::transform(lw.begin(), lw.end(), lw.begin(), [](unsigned char c){ return (char)std::tolower(c); });
+                if (lw == "namespacestd"){
+                    tokens[j].value = "namespace std"; // simple split in-place
+                    tokens[j].type = TokType::KEYWORD;   // treat as keyword chunk for now
+                    issues.push_back("identifier 'namespacestd' -> 'namespace std'");
+                }
+            }
+        }
         // Skip tokens in comments and string literals ONLY
         if (tokens[i].type == TokType::COMMENT || tokens[i].type == TokType::STRING_LITERAL) {
             continue;
@@ -529,6 +549,23 @@ void Analyzer::fixIdentifiers(std::vector<Token> &tokens, std::vector<std::strin
             std::string lowerWord = word;
             std::transform(lowerWord.begin(), lowerWord.end(), lowerWord.begin(), 
                           [](unsigned char c){ return (char)std::tolower(c); });
+
+            // Heuristic split: type merged with identifier (e.g., "intx" -> "int x")
+            if (tokens[i].type == TokType::IDENTIFIER && lowerWord.rfind("int", 0) == 0 && word.size() > 3){
+                std::string suffix = word.substr(3);
+                // suffix must start with a valid identifier char
+                if (!suffix.empty() && (std::isalpha((unsigned char)suffix[0]) || suffix[0]=='_')){
+                    // Replace current token with 'int' keyword, insert space and suffix identifier
+                    tokens[i] = {TokType::KEYWORD, "int"};
+                    tokens.insert(tokens.begin() + i + 1, {TokType::WHITESPACE, " "});
+                    tokens.insert(tokens.begin() + i + 2, {TokType::IDENTIFIER, suffix});
+                    issues.push_back("split '" + word + "' -> 'int " + suffix + "'");
+                    // Advance past inserted tokens
+                    i += 2;
+                    // Continue to next token
+                    continue;
+                }
+            }
             
             // Check known typos first (fast)
             if (knownTypos.count(lowerWord)) {
